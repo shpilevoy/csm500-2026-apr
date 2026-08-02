@@ -14,3 +14,9 @@ add_compile_options(-march=native -Wall -Wextra)
 add_library(kernels
   src/gemm_ref.cpp src/gemm_naive.cpp)
 target_include_directories(kernels PUBLIC src)
+
+add_executable(test_gemm tests/test_gemm.cpp)
+target_link_libraries(test_gemm PRIVATE kernels)
+
+enable_testing()
+add_test(NAME gemm COMMAND test_gemm)
