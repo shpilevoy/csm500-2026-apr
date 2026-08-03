@@ -15,6 +15,9 @@ add_library(kernels
   src/gemm_ref.cpp src/gemm_naive.cpp)
 target_include_directories(kernels PUBLIC src)
 
+add_executable(bench bench/bench.cpp)
+target_link_libraries(bench PRIVATE kernels)
+
 add_executable(test_gemm tests/test_gemm.cpp)
 target_link_libraries(test_gemm PRIVATE kernels)
 
