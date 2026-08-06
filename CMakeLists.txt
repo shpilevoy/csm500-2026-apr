@@ -12,7 +12,7 @@ endif()
 add_compile_options(-march=native -Wall -Wextra)
 
 add_library(kernels
-  src/gemm_ref.cpp src/gemm_naive.cpp)
+  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp)
 target_include_directories(kernels PUBLIC src)
 
 add_executable(bench bench/bench.cpp)

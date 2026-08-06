@@ -15,3 +15,6 @@ void gemm_naive(int M, int N, int K, const float* A, int lda, const float* B,
 // ikj order, so the inner loop has unit stride.
 void gemm_reorder(int M, int N, int K, const float* A, int lda, const float* B,
                   int ldb, float* C, int ldc);
+// Adds cache blocking. Still scalar.
+void gemm_blocked(int M, int N, int K, const float* A, int lda, const float* B,
+                  int ldb, float* C, int ldc);
