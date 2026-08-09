@@ -15,7 +15,8 @@ int main() {
   const struct {
     const char* name;
     GemmFn fn;
-  } kernels[] = {{"naive", gemm_naive}, {"reorder", gemm_reorder}, {"blocked", gemm_blocked}};
+  } kernels[] = {{"naive", gemm_naive}, {"reorder", gemm_reorder}, {"blocked", gemm_blocked},
+                 {"avx2", gemm_avx2}};
   for (const auto& s : shapes) {
     const int M = s[0], N = s[1], K = s[2];
     auto A = alloc_floats(static_cast<std::size_t>(M) * K);

@@ -12,8 +12,14 @@ endif()
 add_compile_options(-march=native -Wall -Wextra)
 
 add_library(kernels
-  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp)
+  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_avx2.cpp)
 target_include_directories(kernels PUBLIC src)
+
+# The scalar stages must stay scalar. The auto-vectoriser would hide the step
+# that the SIMD stage is meant to measure.
+set_source_files_properties(
+  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp PROPERTIES
+  COMPILE_OPTIONS "-fno-tree-vectorize;-fno-tree-slp-vectorize")
 
 add_executable(bench bench/bench.cpp)
 target_link_libraries(bench PRIVATE kernels)

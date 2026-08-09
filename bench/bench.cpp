@@ -9,7 +9,7 @@
 
 int main(int argc, char** argv) {
   if (argc < 3) {
-    std::fprintf(stderr, "usage: bench naive|reorder|blocked N [reps]\n");
+    std::fprintf(stderr, "usage: bench naive|reorder|blocked|avx2 N [reps]\n");
     return 2;
   }
   const int n = std::atoi(argv[2]);
@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
   if (!std::strcmp(argv[1], "naive")) fn = gemm_naive;
   if (!std::strcmp(argv[1], "reorder")) fn = gemm_reorder;
   if (!std::strcmp(argv[1], "blocked")) fn = gemm_blocked;
+  if (!std::strcmp(argv[1], "avx2")) fn = gemm_avx2;
   if (!fn || n <= 0) return 2;
 
   const std::size_t nn = static_cast<std::size_t>(n) * n;

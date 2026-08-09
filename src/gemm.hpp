@@ -18,3 +18,6 @@ void gemm_reorder(int M, int N, int K, const float* A, int lda, const float* B,
 // Adds cache blocking. Still scalar.
 void gemm_blocked(int M, int N, int K, const float* A, int lda, const float* B,
                   int ldb, float* C, int ldc);
+// Adds an AVX2/FMA inner loop.
+void gemm_avx2(int M, int N, int K, const float* A, int lda, const float* B,
+               int ldb, float* C, int ldc);
