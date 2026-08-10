@@ -1,4 +1,4 @@
-// Checks the GEMM kernels against the reference implementation.
+// Checks every GEMM kernel against the reference implementation.
 #include <cstdio>
 
 #include "gemm.hpp"
@@ -12,11 +12,6 @@ int main() {
                            {3, 100, 257}, {129, 65, 33}, {255, 257, 256}, {150, 300, 260}};
   const double tol = 1e-4;
   int failures = 0;
-  const struct {
-    const char* name;
-    GemmFn fn;
-  } kernels[] = {{"naive", gemm_naive}, {"reorder", gemm_reorder}, {"blocked", gemm_blocked},
-                 {"avx2", gemm_avx2}};
   for (const auto& s : shapes) {
     const int M = s[0], N = s[1], K = s[2];
     auto A = alloc_floats(static_cast<std::size_t>(M) * K);
@@ -26,7 +21,7 @@ int main() {
     fill_uniform(A.get(), static_cast<std::size_t>(M) * K, 1);
     fill_uniform(B.get(), static_cast<std::size_t>(K) * N, 2);
     gemm_ref(M, N, K, A.get(), K, B.get(), N, R.get(), N);
-    for (const auto& k : kernels) {
+    for (const auto& k : gemm_kernels()) {
       fill_uniform(C.get(), static_cast<std::size_t>(M) * N, 3);
       k.fn(M, N, K, A.get(), K, B.get(), N, C.get(), N);
       const double e = rel_err(C.get(), R.get(), static_cast<std::size_t>(M) * N);

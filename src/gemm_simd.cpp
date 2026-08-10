@@ -6,7 +6,7 @@
 
 #include "gemm.hpp"
 
-void gemm_avx2(int M, int N, int K, const float* A, int lda, const float* B,
+void gemm_simd(int M, int N, int K, const float* A, int lda, const float* B,
                int ldb, float* C, int ldc) {
   const int BK = 64, BN = 512;
   for (int i = 0; i < M; ++i) std::memset(C + i * ldc, 0, N * sizeof(float));
