@@ -12,7 +12,8 @@ endif()
 add_compile_options(-march=native -Wall -Wextra)
 
 add_library(kernels
-  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_simd.cpp src/registry.cpp)
+  src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_simd.cpp
+  src/gemm_goto.cpp src/registry.cpp)
 target_include_directories(kernels PUBLIC src)
 
 # The scalar stages must stay scalar. The auto-vectoriser would hide the step

@@ -26,6 +26,19 @@ inline FloatBuf alloc_floats(std::size_t n) {
   return FloatBuf(static_cast<float*>(p));
 }
 
+// A buffer that grows when needed and is kept between calls.
+struct Scratch {
+  FloatBuf buf;
+  std::size_t cap = 0;
+  float* get(std::size_t n) {
+    if (n > cap) {
+      buf = alloc_floats(n);
+      cap = n;
+    }
+    return buf.get();
+  }
+};
+
 inline void fill_uniform(float* x, std::size_t n, unsigned seed) {
   std::mt19937 rng(seed);
   std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
