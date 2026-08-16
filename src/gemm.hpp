@@ -25,6 +25,14 @@ void gemm_blocked(int M, int N, int K, const float* A, int lda, const float* B,
 void gemm_simd(int M, int N, int K, const float* A, int lda, const float* B,
                int ldb, float* C, int ldc);
 
+// Block sizes in elements.
+struct GemmParams {
+  int bk = 64;
+  int bn = 512;
+};
+GemmParams& gemm_params();
+bool gemm_set_param(std::string_view name, int value);
+
 struct GemmKernel {
   const char* name;
   GemmFn fn;

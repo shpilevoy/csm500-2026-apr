@@ -1,4 +1,4 @@
-// The list of GEMM kernels.
+// The list of GEMM kernels and their block size settings.
 #include "gemm.hpp"
 
 namespace {
@@ -15,4 +15,18 @@ GemmFn find_gemm(std::string_view name) {
     if (name == k.name) return k.fn;
   }
   return nullptr;
+}
+
+GemmParams& gemm_params() {
+  static GemmParams params;
+  return params;
+}
+
+bool gemm_set_param(std::string_view name, int value) {
+  if (value <= 0) return false;
+  GemmParams& p = gemm_params();
+  if (name == "bk") p.bk = value;
+  else if (name == "bn") p.bn = value;
+  else return false;
+  return true;
 }

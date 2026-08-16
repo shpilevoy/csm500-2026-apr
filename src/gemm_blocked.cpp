@@ -19,7 +19,7 @@ void gemm_reorder(int M, int N, int K, const float* A, int lda, const float* B,
 
 void gemm_blocked(int M, int N, int K, const float* A, int lda, const float* B,
                   int ldb, float* C, int ldc) {
-  const int BK = 64, BN = 512;
+  const int BK = gemm_params().bk, BN = gemm_params().bn;
   for (int i = 0; i < M; ++i) std::memset(C + i * ldc, 0, N * sizeof(float));
   for (int pp = 0; pp < K; pp += BK) {
     const int p_end = std::min(pp + BK, K);
