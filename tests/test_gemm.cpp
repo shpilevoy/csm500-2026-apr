@@ -12,10 +12,13 @@ int main() {
                            {3, 100, 257}, {129, 65, 33}, {255, 257, 256}, {150, 300, 260}};
   const double tol = 1e-4;
   int failures = 0;
-  // The second pass uses tiny blocks. It hits every block boundary.
+  // The second pass uses tiny blocks. It hits every block boundary and edge tile.
   for (const bool tiny_blocks : {false, true}) {
     if (tiny_blocks) {
       for (const char* name : {"bk", "bn"}) gemm_set_param(name, 5);
+      gemm_set_param("mc", 12);
+      gemm_set_param("kc", 7);
+      gemm_set_param("nc", 32);
     }
     for (const auto& s : shapes) {
       const int M = s[0], N = s[1], K = s[2];

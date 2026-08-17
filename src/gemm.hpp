@@ -1,4 +1,4 @@
-// GEMM kernels.
+// GEMM kernels, from a naive triple loop to a packed microkernel.
 #pragma once
 
 #include <span>
@@ -24,11 +24,23 @@ void gemm_blocked(int M, int N, int K, const float* A, int lda, const float* B,
 // Adds an AVX2/FMA inner loop.
 void gemm_simd(int M, int N, int K, const float* A, int lda, const float* B,
                int ldb, float* C, int ldc);
+// Adds packing and a 6x16 microkernel.
+void gemm_goto(int M, int N, int K, const float* A, int lda, const float* B,
+               int ldb, float* C, int ldc);
 
 // Block sizes in elements.
 struct GemmParams {
+  // Used by blocked and simd.
   int bk = 64;
   int bn = 512;
+  // Used by goto and goto_mt. Packed A is mc x kc and packed B is kc x nc.
+  // The default values are those of the BLIS configuration for AMD Zen in
+  // single precision. They come from F. G. Van Zee and others, "BLIS", file
+  // config/zen/bli_cntx_init_zen.c. https://github.com/flame/blis
+  // (accessed 17 Aug 2026).
+  int mc = 144;
+  int kc = 256;
+  int nc = 4080;
 };
 GemmParams& gemm_params();
 bool gemm_set_param(std::string_view name, int value);

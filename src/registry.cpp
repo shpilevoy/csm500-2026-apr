@@ -5,6 +5,7 @@ namespace {
 constexpr GemmKernel kKernels[] = {
     {"naive", gemm_naive},     {"reorder", gemm_reorder},
     {"blocked", gemm_blocked}, {"simd", gemm_simd},
+    {"goto", gemm_goto},
 };
 }  // namespace
 
@@ -27,6 +28,9 @@ bool gemm_set_param(std::string_view name, int value) {
   GemmParams& p = gemm_params();
   if (name == "bk") p.bk = value;
   else if (name == "bn") p.bn = value;
+  else if (name == "mc") p.mc = value;
+  else if (name == "kc") p.kc = value;
+  else if (name == "nc") p.nc = value;
   else return false;
   return true;
 }
