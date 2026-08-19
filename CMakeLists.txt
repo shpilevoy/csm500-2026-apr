@@ -9,12 +9,14 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+find_package(OpenMP REQUIRED)
 add_compile_options(-march=native -Wall -Wextra)
 
 add_library(kernels
   src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_simd.cpp
   src/gemm_goto.cpp src/registry.cpp)
 target_include_directories(kernels PUBLIC src)
+target_link_libraries(kernels PUBLIC OpenMP::OpenMP_CXX)
 
 # The scalar stages must stay scalar. The auto-vectoriser would hide the step
 # that the SIMD stage is meant to measure.

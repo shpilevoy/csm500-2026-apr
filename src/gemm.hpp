@@ -1,4 +1,5 @@
 // GEMM kernels, from a naive triple loop to a packed microkernel.
+// Only gemm_goto_mt uses more than one thread.
 #pragma once
 
 #include <span>
@@ -27,6 +28,9 @@ void gemm_simd(int M, int N, int K, const float* A, int lda, const float* B,
 // Adds packing and a 6x16 microkernel.
 void gemm_goto(int M, int N, int K, const float* A, int lda, const float* B,
                int ldb, float* C, int ldc);
+// Adds OpenMP.
+void gemm_goto_mt(int M, int N, int K, const float* A, int lda, const float* B,
+                  int ldb, float* C, int ldc);
 
 // Block sizes in elements.
 struct GemmParams {

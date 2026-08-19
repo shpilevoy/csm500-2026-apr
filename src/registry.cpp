@@ -5,7 +5,7 @@ namespace {
 constexpr GemmKernel kKernels[] = {
     {"naive", gemm_naive},     {"reorder", gemm_reorder},
     {"blocked", gemm_blocked}, {"simd", gemm_simd},
-    {"goto", gemm_goto},
+    {"goto", gemm_goto},       {"goto_mt", gemm_goto_mt},
 };
 }  // namespace
 

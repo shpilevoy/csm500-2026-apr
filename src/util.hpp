@@ -46,9 +46,11 @@ inline void fill_uniform(float* x, std::size_t n, unsigned seed) {
 }
 
 // Largest absolute error divided by the largest reference magnitude.
+// A result that is not finite gives infinity. std::max alone would skip a NaN.
 inline double rel_err(const float* got, const float* ref, std::size_t n) {
   double err = 0.0, scale = 0.0;
   for (std::size_t i = 0; i < n; ++i) {
+    if (!std::isfinite(got[i])) return INFINITY;
     err = std::max(err, std::abs(static_cast<double>(got[i]) - ref[i]));
     scale = std::max(scale, std::abs(static_cast<double>(ref[i])));
   }

@@ -1,6 +1,7 @@
 // GEMM in the style of Goto and BLIS. Both operands are packed into buffers
 // that fit the caches. One microkernel does all the arithmetic.
 #include <immintrin.h>
+#include <omp.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -165,8 +166,10 @@ void gemm_packed(int M, int N, int K, const float* A, int lda, const float* B,
       const bool stream = store && opts.stream_c && K <= KC &&
                           reinterpret_cast<std::uintptr_t>(C) % 32 == 0 && ldc % 8 == 0 && jc % 8 == 0;
       const Write full_tile = stream ? Write::Stream : store ? Write::Store : Write::Add;
+#pragma omp parallel num_threads(opts.threads) if (opts.threads > 1)
       {
         if (!opts.packed_b) {
+#pragma omp for schedule(static)
           for (int jr = 0; jr < nc; jr += NR) {
             pack_b_at(nc, kc, B, ldb, opts.trans_b, jc, pc, jr, b_buf);
           }
@@ -175,7 +178,7 @@ void gemm_packed(int M, int N, int K, const float* A, int lda, const float* B,
         // Rows are split evenly across threads in whole MR tiles. The split
         // then stays balanced when M is only a few multiples of MC.
         const int tiles = (M + MR - 1) / MR;
-        const int t = 0, T = 1;
+        const int t = omp_get_thread_num(), T = omp_get_num_threads();
         const int i_begin = static_cast<int>(static_cast<long>(tiles) * t / T) * MR;
         const int i_end = std::min(M, static_cast<int>(static_cast<long>(tiles) * (t + 1) / T) * MR);
 
@@ -215,4 +218,9 @@ void gemm_packed(int M, int N, int K, const float* A, int lda, const float* B,
 void gemm_goto(int M, int N, int K, const float* A, int lda, const float* B,
                int ldb, float* C, int ldc) {
   gemm_packed(M, N, K, A, lda, B, ldb, C, ldc, {});
+}
+
+void gemm_goto_mt(int M, int N, int K, const float* A, int lda, const float* B,
+                  int ldb, float* C, int ldc) {
+  gemm_packed(M, N, K, A, lda, B, ldb, C, ldc, {.threads = omp_get_max_threads()});
 }

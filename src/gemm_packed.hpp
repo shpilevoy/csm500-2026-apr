@@ -5,6 +5,7 @@
 
 struct GemmPackedOpts {
   bool accumulate = false;
+  int threads = 1;
 };
 
 void gemm_packed(int M, int N, int K, const float* A, int lda, const float* B,

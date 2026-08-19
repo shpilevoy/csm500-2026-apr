@@ -12,6 +12,13 @@ int main() {
                            {3, 100, 257}, {129, 65, 33}, {255, 257, 256}, {150, 300, 260}};
   const double tol = 1e-4;
   int failures = 0;
+  // The error measure itself must reject a result that is not a number.
+  {
+    const float ref[2] = {1.0f, 2.0f}, bad[2] = {1.0f, NAN};
+    const bool ok = !(rel_err(bad, ref, 2) < tol) && rel_err(ref, ref, 2) == 0.0;
+    failures += !ok;
+    std::printf("%-4s rel_err rejects NaN\n", ok ? "ok" : "FAIL");
+  }
   // The second pass uses tiny blocks. It hits every block boundary and edge tile.
   for (const bool tiny_blocks : {false, true}) {
     if (tiny_blocks) {
