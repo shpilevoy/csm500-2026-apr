@@ -24,8 +24,8 @@ set_source_files_properties(
   src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp PROPERTIES
   COMPILE_OPTIONS "-fno-tree-vectorize;-fno-tree-slp-vectorize")
 
-add_executable(bench bench/bench.cpp)
-target_link_libraries(bench PRIVATE kernels)
+add_executable(bench_gemm bench/bench_gemm.cpp)
+target_link_libraries(bench_gemm PRIVATE kernels)
 
 add_executable(test_gemm tests/test_gemm.cpp)
 target_link_libraries(test_gemm PRIVATE kernels)
