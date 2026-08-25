@@ -56,6 +56,9 @@ int main(int argc, char** argv) {
     usage();
   }
 
+  // Opened before any thread exists so worker threads inherit the counters.
+  PerfCounters counters;
+
   GemmFn fn = find_gemm(kernel);
   if (!fn) {
     std::fprintf(stderr, "unknown kernel '%s'; available:", kernel.c_str());
@@ -85,7 +88,7 @@ int main(int argc, char** argv) {
   const std::string values = kernel + "," + params + "," + std::to_string(M) + "," +
                              std::to_string(N) + "," + std::to_string(K) + "," +
                              std::to_string(omp_get_max_threads());
-  rec.run(values, reps, 2.0 * M * N * K, err,
+  rec.run(counters, values, reps, 2.0 * M * N * K, err,
           [&] { fn(M, N, K, A.get(), K, B.get(), N, C.get(), N); });
   return 0;
 }

@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <string>
 
+#include "perf_counters.hpp"
+
 // Each row is synced to disk. An interrupted run then keeps everything
 // measured so far.
 class Recorder {
@@ -22,6 +24,7 @@ class Recorder {
     }
     if (file_ == stdout || std::ftell(file_) == 0) {
       std::fprintf(file_, "%s,rep,seconds,gflops", columns);
+      for (const char* name : PerfCounters::kNames) std::fprintf(file_, ",%s", name);
       std::fprintf(file_, ",rel_err\n");
     }
   }
@@ -33,13 +36,17 @@ class Recorder {
 
   // rel_err < 0 means "not checked".
   template <typename Fn>
-  void run(const std::string& values, int reps, double flops, double rel_err, Fn&& fn) {
+  void run(const PerfCounters& counters, const std::string& values, int reps,
+           double flops, double rel_err, Fn&& fn) {
     for (int r = 0; r < reps; ++r) {
+      const auto c0 = counters.read();
       const auto t0 = std::chrono::steady_clock::now();
       fn();
       const auto t1 = std::chrono::steady_clock::now();
+      const auto d = PerfCounters::delta(c0, counters.read());
       const double s = std::chrono::duration<double>(t1 - t0).count();
       std::fprintf(file_, "%s,%d,%.9f,%.4f", values.c_str(), r, s, flops / s / 1e9);
+      for (auto v : d) std::fprintf(file_, ",%lld", static_cast<long long>(v));
       if (rel_err >= 0.0) std::fprintf(file_, ",%.3e\n", rel_err);
       else std::fprintf(file_, ",\n");
       std::fflush(file_);
