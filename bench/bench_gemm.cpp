@@ -1,4 +1,5 @@
 // Times one GEMM point. A point is a kernel, a shape and a thread count.
+#include <dlfcn.h>
 #include <omp.h>
 #include <cstdio>
 #include <cstdlib>
@@ -11,11 +12,35 @@
 
 namespace {
 
+using CblasSgemm = void (*)(int order, int transA, int transB, int M, int N,
+                            int K, float alpha, const float* A, int lda,
+                            const float* B, int ldb, float beta, float* C,
+                            int ldc);
+CblasSgemm g_cblas_sgemm = nullptr;
+
+void gemm_blas(int M, int N, int K, const float* A, int lda, const float* B,
+               int ldb, float* C, int ldc) {
+  constexpr int kRowMajor = 101, kNoTrans = 111;
+  g_cblas_sgemm(kRowMajor, kNoTrans, kNoTrans, M, N, K, 1.0f, A, lda, B, ldb,
+                0.0f, C, ldc);
+}
+
+void* open_library(const std::string& path) {
+  void* handle = dlopen(path.c_str(), RTLD_NOW | RTLD_LOCAL);
+  if (!handle) {
+    std::fprintf(stderr, "dlopen: %s\n", dlerror());
+    std::exit(1);
+  }
+  return handle;
+}
+
 [[noreturn]] void usage() {
   std::fprintf(stderr,
                "usage: bench_gemm --kernel NAME --m M --n N --k K [--reps R]\n"
-               "                  [--warmup W]\n"
+               "                  [--warmup W] [--blas-lib PATH]\n"
                "                  [--check] [--set PARAM=VALUE]... [--out FILE]\n"
+               "  --blas-lib  time cblas_sgemm from this shared library. NAME\n"
+               "              is then only the label written to the CSV\n"
                "  --set       override a block size (bk bn mc kc nc)\n"
                "  --check     also report the error against the reference implementation\n");
   std::exit(2);
@@ -24,7 +49,7 @@ namespace {
 }  // namespace
 
 int main(int argc, char** argv) {
-  std::string kernel, out, params;
+  std::string kernel, blas_lib, out, params;
   int M = 0, N = 0, K = 0, reps = 30, warmup = 5;
   bool check = false;
   for (int i = 1; i < argc; ++i) {
@@ -34,6 +59,7 @@ int main(int argc, char** argv) {
       return argv[++i];
     };
     if (a == "--kernel") kernel = next();
+    else if (a == "--blas-lib") blas_lib = next();
     else if (a == "--out") out = next();
     else if (a == "--m") M = std::atoi(next());
     else if (a == "--n") N = std::atoi(next());
@@ -59,12 +85,22 @@ int main(int argc, char** argv) {
   // Opened before any thread exists so worker threads inherit the counters.
   PerfCounters counters;
 
-  GemmFn fn = find_gemm(kernel);
-  if (!fn) {
-    std::fprintf(stderr, "unknown kernel '%s'; available:", kernel.c_str());
-    for (const auto& k : gemm_kernels()) std::fprintf(stderr, " %s", k.name);
-    std::fprintf(stderr, "\n");
-    return 1;
+  GemmFn fn = nullptr;
+  if (!blas_lib.empty()) {
+    g_cblas_sgemm = reinterpret_cast<CblasSgemm>(dlsym(open_library(blas_lib), "cblas_sgemm"));
+    if (!g_cblas_sgemm) {
+      std::fprintf(stderr, "no cblas_sgemm in %s\n", blas_lib.c_str());
+      return 1;
+    }
+    fn = gemm_blas;
+  } else {
+    fn = find_gemm(kernel);
+    if (!fn) {
+      std::fprintf(stderr, "unknown kernel '%s'; available:", kernel.c_str());
+      for (const auto& k : gemm_kernels()) std::fprintf(stderr, " %s", k.name);
+      std::fprintf(stderr, "\n");
+      return 1;
+    }
   }
 
   const std::size_t a_n = static_cast<std::size_t>(M) * K;

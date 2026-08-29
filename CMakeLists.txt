@@ -25,7 +25,7 @@ set_source_files_properties(
   COMPILE_OPTIONS "-fno-tree-vectorize;-fno-tree-slp-vectorize")
 
 add_executable(bench_gemm bench/bench_gemm.cpp)
-target_link_libraries(bench_gemm PRIVATE kernels)
+target_link_libraries(bench_gemm PRIVATE kernels ${CMAKE_DL_LIBS})
 
 add_executable(test_gemm tests/test_gemm.cpp)
 target_link_libraries(test_gemm PRIVATE kernels)
