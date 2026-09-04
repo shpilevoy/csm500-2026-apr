@@ -31,12 +31,46 @@ def load(path):
     d["params"] = d["params"].fillna("")
     d["flops"] = d.gflops * d.seconds * 1e9
     d["flops_per_cycle"] = d.flops / d.cycles
+    d["dram_bytes"] = dram_lines(d) * 64
     return d
 
 
+def dram_lines(d):
+    """Cache lines read from main memory, estimated from the hardware counters."""
+    # L2 prefetches that missed L3 plus demand misses of L2 filled from main memory.
+    # min() is used because a line counts only if it both missed L2 and came from
+    # main memory. The calibration table in make_tables.py checks this estimate.
+    return d.l2pf_dram + d[["l2_miss", "dram_fills"]].min(axis=1)
+
+
 def medians(d, keys):
-    cols = ["gflops", "flops_per_cycle", "flops", "seconds"]
+    cols = ["gflops", "flops_per_cycle", "flops", "dram_bytes", "seconds"]
     return d.groupby(keys, as_index=False)[cols].median()
+
+
+def ceilings(machine, threads):
+    """Returns (compute peak in GFLOP/s, read bandwidth of main memory in GB/s)."""
+    # The bandwidth is that of the read-only loop. Its traffic is known exactly.
+    # It is the most a kernel can read and is reached only if nothing is written back.
+    m = machine[machine.threads == threads]
+    peak = m[m.kernel == "fma"].gflops.median()
+    big = m[(m.kernel == "sum") & (m.elems == m.elems.max())]
+    return peak, (big.elems * big.passes * big.threads * 4 / big.seconds).median() / 1e9
+
+
+def roofline(ax, peak, bandwidth, x_lo, x_hi):
+    """Draws the two roofline limits on log axes."""
+    ridge = peak / bandwidth
+    ax.plot([x_lo, ridge, x_hi], [x_lo * bandwidth, peak, peak], color=INK2, linewidth=1.5, zorder=2)
+    ax.annotate(f"compute peak {peak:.0f} GFLOP/s", (x_hi, peak), xytext=(-4, 5),
+                textcoords="offset points", ha="right", color=INK2, fontsize=9)
+    ax.annotate(f"memory read bandwidth {bandwidth:.0f} GB/s", (x_lo * 2, x_lo * 2 * bandwidth), xytext=(6, -12),
+                textcoords="offset points", color=INK2, fontsize=9, rotation=0)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlim(x_lo, x_hi)
+    ax.set_xlabel("Arithmetic intensity (FLOP per byte read from DRAM, measured)")
+    ax.set_ylabel("GFLOP/s")
 
 
 def fig_gemm_ladder(gemm, machine, out):
@@ -68,6 +102,37 @@ def fig_gemm_ladder(gemm, machine, out):
     fig.savefig(out / "gemm_ladder.png", dpi=200)
 
 
+def fig_gemm_roofline(gemm, machine, out):
+    """GEMM kernels on the roofline, one thread."""
+    peak, bw = ceilings(machine, 1)
+    g = medians(gemm[(gemm.threads == 1) & (gemm.m == 2048) & (gemm.k == 2048)], ["kernel", "params"])
+    names = {("naive", ""): "naive", ("reorder", ""): "reorder", ("blocked", ""): "blocked", ("simd", "bk=1000000;bn=1000000"): "AVX2, no blocking",
+             ("simd", ""): "AVX2 + blocking", ("goto", ""): "packed microkernel", ("blis", ""): "BLIS",
+             ("openblas", ""): "OpenBLAS", ("onednn", ""): "oneDNN"}
+    fig, ax = plt.subplots(figsize=(7.5, 4.6))
+    roofline(ax, peak, bw, 0.05, 2e4)
+    ax.set_ylim(0.2, peak * 2.5)
+    for _, r in g.iterrows():
+        name = names.get((r.kernel, r.params))
+        if name is None:
+            continue
+        lib = r.kernel in LIBRARIES
+        x = r.flops / max(r.dram_bytes, 1)
+        ax.scatter([x], [r.gflops], color=ORANGE if lib else BLUE, s=40 if lib else 55, zorder=4 if lib else 3,
+                   edgecolor=SURFACE, linewidth=1.2)
+        offset, align = {"OpenBLAS": ((-8, 4), "right"), "BLIS": ((6, 10), "left"), "oneDNN": ((-8, -14), "right"),
+                         "packed microkernel": ((9, -14), "left"),
+                         "AVX2, no blocking": ((10, -4), "left")}.get(name, ((0, 9), "center"))
+        ax.annotate(name, (x, r.gflops), xytext=offset, textcoords="offset points", ha=align,
+                    fontsize=9, color=INK)
+    ax.scatter([], [], color=BLUE, label="this work")
+    ax.scatter([], [], color=ORANGE, label="library")
+    ax.legend(loc="lower right")
+    ax.set_title("GEMM 2048x2048x2048 on the roofline, single thread")
+    fig.tight_layout()
+    fig.savefig(out / "gemm_roofline.png", dpi=200)
+
+
 LIBRARIES = ("blis", "openblas", "onednn")
 
 ATTN = [("mat_stream", "materialised", BLUE, "o"), ("qblock", "query-blocked", ORANGE, "s"),
@@ -86,6 +151,7 @@ def main():
     out.mkdir(exist_ok=True)
     machine, gemm = load(root / "machine.csv"), load(root / "gemm.csv")
     fig_gemm_ladder(gemm, machine, out)
+    fig_gemm_roofline(gemm, machine, out)
     print("wrote", *sorted(p.name for p in out.glob("*.png")))
 
 
