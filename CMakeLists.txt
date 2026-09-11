@@ -15,7 +15,7 @@ add_compile_options(-march=native -Wall -Wextra)
 add_library(kernels
   src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_simd.cpp
   src/gemm_goto.cpp src/registry.cpp
-  src/attention_scalar.cpp)
+  src/attention_scalar.cpp src/attention.cpp)
 target_include_directories(kernels PUBLIC src)
 target_link_libraries(kernels PUBLIC OpenMP::OpenMP_CXX)
 
@@ -35,5 +35,9 @@ target_link_libraries(bench_machine PRIVATE kernels)
 add_executable(test_gemm tests/test_gemm.cpp)
 target_link_libraries(test_gemm PRIVATE kernels)
 
+add_executable(test_attn tests/test_attn.cpp)
+target_link_libraries(test_attn PRIVATE kernels)
+
 enable_testing()
 add_test(NAME gemm COMMAND test_gemm)
+add_test(NAME attn COMMAND test_attn)
