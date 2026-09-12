@@ -29,6 +29,9 @@ set_source_files_properties(
 add_executable(bench_gemm bench/bench_gemm.cpp)
 target_link_libraries(bench_gemm PRIVATE kernels ${CMAKE_DL_LIBS})
 
+add_executable(bench_attn bench/bench_attn.cpp)
+target_link_libraries(bench_attn PRIVATE kernels)
+
 add_executable(bench_machine bench/bench_machine.cpp)
 target_link_libraries(bench_machine PRIVATE kernels)
 

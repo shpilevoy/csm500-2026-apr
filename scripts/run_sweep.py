@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # are both CLI flags and CSV columns.
 OPS = {
     "gemm": (ROOT / "build" / "bench_gemm", ("m", "k", "n")),
+    "attn": (ROOT / "build" / "bench_attn", ("heads", "len", "dim")),
     "machine": (ROOT / "build" / "bench_machine", ("elems",)),
 }
 LIB_DIR = Path("/usr/lib/x86_64-linux-gnu")
@@ -95,7 +96,7 @@ def main():
                     help=f"our kernel names or baselines. gemm baselines are {', '.join(BLAS_LIBS)}. "
                          "machine kernels are fma, triad, sum, update, fill")
     ap.add_argument("--shapes", nargs="+", required=True,
-                    help="gemm takes S for a square or MxKxN. "
+                    help="gemm takes S for a square or MxKxN. attn takes HEADSxLENxDIM. "
                          "machine takes floats per array")
     ap.add_argument("--set", nargs="+", default=[], metavar="PARAM=VALUE",
                     help="block or tile sizes for our kernels")
