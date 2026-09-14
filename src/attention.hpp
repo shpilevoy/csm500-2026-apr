@@ -18,6 +18,9 @@ void attn_naive(int H, int L, int d, const float* Q, const float* K,
 // Full L x L scores with packed GEMM and vectorised softmax.
 void attn_mat(int H, int L, int d, const float* Q, const float* K,
               const float* V, float* O);
+// Like attn_mat but writes the scores with non-temporal stores.
+void attn_mat_stream(int H, int L, int d, const float* Q, const float* K,
+                     const float* V, float* O);
 
 // Tile sizes in rows.
 struct AttnParams {

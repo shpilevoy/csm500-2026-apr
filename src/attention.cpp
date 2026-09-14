@@ -66,10 +66,16 @@ void attn_mat(int H, int L, int d, const float* Q, const float* K,
   attn_query_blocked(H, L, d, Q, K, V, O, L, false);
 }
 
+void attn_mat_stream(int H, int L, int d, const float* Q, const float* K,
+                     const float* V, float* O) {
+  attn_query_blocked(H, L, d, Q, K, V, O, L, true);
+}
+
 namespace {
 constexpr AttnKernel kKernels[] = {
     {"naive", attn_naive},
     {"mat", attn_mat},
+    {"mat_stream", attn_mat_stream},
 };
 }  // namespace
 

@@ -8,6 +8,9 @@ struct GemmPackedOpts {
   bool trans_b = false;
   bool accumulate = false;
   int threads = 1;
+  // Non-temporal stores. They help only when C is much larger than the caches
+  // and is not read again soon. Ignored when it cannot apply.
+  bool stream_c = false;
   // B already packed by gemm_pack_b with the same N, K and block sizes. B and
   // ldb are then ignored.
   const float* packed_b = nullptr;
