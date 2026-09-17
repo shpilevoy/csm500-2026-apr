@@ -71,11 +71,19 @@ void attn_mat_stream(int H, int L, int d, const float* Q, const float* K,
   attn_query_blocked(H, L, d, Q, K, V, O, L, true);
 }
 
+void attn_qblock(int H, int L, int d, const float* Q, const float* K,
+                 const float* V, float* O) {
+  int qb = attn_params().qb;
+  if (qb <= 0) qb = std::max(6, kScoreTileFloats / L);
+  attn_query_blocked(H, L, d, Q, K, V, O, std::min(qb, L), false);
+}
+
 namespace {
 constexpr AttnKernel kKernels[] = {
     {"naive", attn_naive},
     {"mat", attn_mat},
     {"mat_stream", attn_mat_stream},
+    {"qblock", attn_qblock},
 };
 }  // namespace
 

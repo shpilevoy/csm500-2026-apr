@@ -21,6 +21,9 @@ void attn_mat(int H, int L, int d, const float* Q, const float* K,
 // Like attn_mat but writes the scores with non-temporal stores.
 void attn_mat_stream(int H, int L, int d, const float* Q, const float* K,
                      const float* V, float* O);
+// Blocked over queries. Uses a qb x L score tile and ordinary softmax.
+void attn_qblock(int H, int L, int d, const float* Q, const float* K,
+                 const float* V, float* O);
 
 // Tile sizes in rows.
 struct AttnParams {
