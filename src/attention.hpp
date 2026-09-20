@@ -24,6 +24,9 @@ void attn_mat_stream(int H, int L, int d, const float* Q, const float* K,
 // Blocked over queries. Uses a qb x L score tile and ordinary softmax.
 void attn_qblock(int H, int L, int d, const float* Q, const float* K,
                  const float* V, float* O);
+// Blocked over queries and keys. Uses a tq x tk score tile and online softmax.
+void attn_tiled(int H, int L, int d, const float* Q, const float* K,
+                const float* V, float* O);
 
 // Tile sizes in rows.
 struct AttnParams {

@@ -78,12 +78,79 @@ void attn_qblock(int H, int L, int d, const float* Q, const float* K,
   attn_query_blocked(H, L, d, Q, K, V, O, std::min(qb, L), false);
 }
 
+void attn_tiled(int H, int L, int d, const float* Q, const float* K,
+                const float* V, float* O) {
+  const int TQ = std::min(attn_params().tq, L), TK = std::min(attn_params().tk, L);
+  const float scale = 1.0f / std::sqrt(static_cast<float>(d));
+  const std::size_t head = static_cast<std::size_t>(L) * d;
+  const int blocks = (L + TQ - 1) / TQ, key_tiles = (L + TK - 1) / TK;
+  const std::size_t k_size = gemm_packed_b_size(TK, d), v_size = gemm_packed_b_size(d, TK);
+  const std::size_t slot = k_size + v_size;
+  static Scratch packed;
+  float* const P = packed.get(static_cast<std::size_t>(H) * key_tiles * slot);
+#pragma omp parallel
+  {
+#pragma omp for collapse(2) schedule(static)
+    for (int h = 0; h < H; ++h) {
+      for (int t = 0; t < key_tiles; ++t) {
+        const int k0 = t * TK, cols = std::min(TK, L - k0);
+        float* p = P + (static_cast<std::size_t>(h) * key_tiles + t) * slot;
+        gemm_pack_b(cols, d, K + h * head + static_cast<std::size_t>(k0) * d, d, true, p);
+        gemm_pack_b(d, cols, V + h * head + static_cast<std::size_t>(k0) * d, d, false, p + k_size);
+      }
+    }
+#pragma omp for collapse(2) schedule(dynamic)
+    for (int h = 0; h < H; ++h) {
+      for (int b = 0; b < blocks; ++b) {
+        static thread_local Scratch scratch;
+        float* const S = scratch.get(static_cast<std::size_t>(TQ) * TK + 2 * TQ);
+        float* const run_max = S + static_cast<std::size_t>(TQ) * TK;
+        float* const run_sum = run_max + TQ;
+
+        const int q0 = b * TQ, rows = std::min(TQ, L - q0);
+        const float* q = Q + h * head + static_cast<std::size_t>(q0) * d;
+        float* o = O + h * head + static_cast<std::size_t>(q0) * d;
+        std::fill(run_max, run_max + rows, -INFINITY);
+        std::fill(run_sum, run_sum + rows, 0.0f);
+
+        const int tiles = key_tiles;
+        for (int t = 0; t < tiles; ++t) {
+          const int k0 = t * TK, cols = std::min(TK, L - k0);
+          const float* p = P + (static_cast<std::size_t>(h) * key_tiles + t) * slot;
+          gemm_packed(rows, cols, d, q, d, nullptr, 0, S, cols, {.packed_b = p});
+          for (int r = 0; r < rows; ++r) {
+            float* s = S + static_cast<std::size_t>(r) * cols;
+            const int valid = cols;
+            std::fill(s + valid, s + cols, 0.0f);
+            if (valid == 0) continue;
+            const float new_max = std::max(run_max[r], row_max(s, valid) * scale);
+            // Online softmax. Rescale the totals so far to the new maximum.
+            if (t > 0 && new_max != run_max[r]) {
+              const float alpha = std::exp(run_max[r] - new_max);
+              run_sum[r] *= alpha;
+              row_scale(o + static_cast<std::size_t>(r) * d, d, alpha);
+            }
+            run_max[r] = new_max;
+            run_sum[r] += row_exp(s, valid, scale, new_max);
+          }
+          gemm_packed(rows, d, cols, S, cols, nullptr, 0, o, d,
+                      {.accumulate = t > 0, .packed_b = p + k_size});
+        }
+        for (int r = 0; r < rows; ++r) {
+          row_scale(o + static_cast<std::size_t>(r) * d, d, 1.0f / run_sum[r]);
+        }
+      }
+    }
+  }
+}
+
 namespace {
 constexpr AttnKernel kKernels[] = {
     {"naive", attn_naive},
     {"mat", attn_mat},
     {"mat_stream", attn_mat_stream},
     {"qblock", attn_qblock},
+    {"tiled", attn_tiled},
 };
 }  // namespace
 
