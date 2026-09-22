@@ -24,6 +24,8 @@ OPS = {
     "attn": (ROOT / "build" / "bench_attn", ("heads", "len", "dim")),
     "machine": (ROOT / "build" / "bench_machine", ("elems",)),
 }
+TORCH_ATTN = [sys.executable, str(ROOT / "scripts" / "bench_torch_attn.py")]
+TORCH_KERNELS = ("torch", "torch_direct")
 LIB_DIR = Path("/usr/lib/x86_64-linux-gnu")
 # Library baselines. The flag tells bench_gemm how to call the library.
 BLAS_LIBS = {
@@ -94,12 +96,13 @@ def main():
     ap.add_argument("--op", choices=OPS, default="gemm")
     ap.add_argument("--kernels", nargs="+", required=True,
                     help=f"our kernel names or baselines. gemm baselines are {', '.join(BLAS_LIBS)}. "
+                         f"attn baselines are {', '.join(TORCH_KERNELS)}. "
                          "machine kernels are fma, triad, sum, update, fill")
     ap.add_argument("--shapes", nargs="+", required=True,
                     help="gemm takes S for a square or MxKxN. attn takes HEADSxLENxDIM. "
                          "machine takes floats per array")
     ap.add_argument("--set", nargs="+", default=[], metavar="PARAM=VALUE",
-                    help="block or tile sizes for our kernels")
+                    help="block or tile sizes for our kernels. causal=1 also applies to PyTorch")
     ap.add_argument("--threads", nargs="+", type=int, default=[1])
     ap.add_argument("--reps", type=int, default=30)
     ap.add_argument("--warmup", type=int, default=5)
@@ -121,8 +124,10 @@ def main():
     done = done_points(args.out, cols)
 
     for i, (kernel, shape, threads) in enumerate(points, 1):
-        baseline = args.op == "gemm" and kernel in BLAS_LIBS
-        settings = [] if baseline else args.set
+        torch = args.op == "attn" and kernel in TORCH_KERNELS
+        baseline = torch or (args.op == "gemm" and kernel in BLAS_LIBS)
+        # A library ignores our block sizes. The mask is the only setting it shares.
+        settings = [kv for kv in args.set if kv == "causal=1"] if torch else [] if baseline else args.set
         params = ";".join(settings)
         label = f"[{i}/{len(points)}] {kernel} {'x'.join(map(str, shape))} threads={threads} {params}"
         if done[(kernel, params, shape, threads)] >= args.reps:
@@ -135,7 +140,7 @@ def main():
             "OMP_PROC_BIND": "true",
             "OMP_PLACES": ",".join(f"{{{c}}}" for c in cores[:threads]),
         }
-        cmd = [str(bench)]
+        cmd = TORCH_ATTN if torch else [str(bench)]
         cmd = cmd + ["--kernel", kernel, "--reps", str(args.reps), "--out", str(args.out)]
         if args.op != "machine":
             cmd += ["--warmup", str(args.warmup)]
