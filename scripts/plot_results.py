@@ -140,6 +140,49 @@ ATTN = [("mat_stream", "materialised", BLUE, "o"), ("qblock", "query-blocked", O
         ("torch_direct", "PyTorch, direct method", MAGENTA, "v")]
 
 
+def fig_attn_scaling(attn, machine, out):
+    """Attention throughput against sequence length."""
+    a = medians(attn[(attn.threads == 8) & (attn.dim == 64) & (attn.params == "")], ["kernel", "len"])
+    fig, ax = plt.subplots(figsize=(7.5, 4.2))
+    for kernel, label, color, marker in ATTN:
+        s = a[a.kernel == kernel].sort_values("len")
+        ax.plot(s.len, s.gflops, color=color, marker=marker, label=label, markeredgecolor=SURFACE, markeredgewidth=1.2)
+    ax.set_xscale("log", base=2)
+    ax.set_xticks(sorted(a.len.unique()))
+    ax.set_xticklabels([str(v) for v in sorted(a.len.unique())])
+    ax.set_xlim(a.len.min() * 0.85, a.len.max() * 1.2)
+    ax.set_ylim(0, None)
+    ax.set_xlabel("Sequence length")
+    ax.set_ylabel("GFLOP/s (matrix products only)")
+    ax.set_title("Attention throughput by sequence length (8 heads x 64 dims, 8 threads)")
+    ax.legend(loc="upper left", ncols=2, fontsize=9)
+    ax.set_ylim(0, a.gflops.max() * 1.35)
+    fig.tight_layout()
+    fig.savefig(out / "attn_scaling.png", dpi=200)
+
+
+def fig_attn_roofline(attn, machine, out):
+    """Attention kernels on the roofline, 8 threads."""
+    peak, bw = ceilings(machine, 8)
+    a = medians(attn[(attn.threads == 8) & (attn.dim == 64) & (attn.params == "") & (attn.len >= 1024)],
+                ["kernel", "len"])
+    fig, ax = plt.subplots(figsize=(7.5, 4.6))
+    roofline(ax, peak, bw, 0.5, 2e4)
+    ax.set_ylim(20, peak * 2.5)
+    # Both materialised kernels are drawn here. Points only, since a line through lengths doubles back.
+    series = [("mat", "materialised", "#104281", "o"), ("mat_stream", "materialised, streaming", BLUE, "o")] + ATTN[1:]
+    for kernel, label, color, marker in series:
+        s = a[a.kernel == kernel].sort_values("len")
+        x = s.flops / s.dram_bytes.clip(lower=1)
+        ax.scatter(x, s.gflops, color=color, marker=marker, label=label, s=45, edgecolor=SURFACE, linewidth=1.2,
+                   zorder=3)
+    ax.set_ylim(20, peak * 2.5)
+    ax.legend(loc="lower right", fontsize=9)
+    ax.set_title("Attention on the roofline, one point per length from 1,024 (8 threads)")
+    fig.tight_layout()
+    fig.savefig(out / "attn_roofline.png", dpi=200)
+
+
 DECODE = [("naive", "naive (scalar)", BLUE, "o"), ("simd", "AVX2, three passes", ORANGE, "s"),
           ("fused", "AVX2, one pass", AQUA, "^"), ("torch", "PyTorch", YELLOW, "D"),
           ("fused_f16", "AVX2, one pass, half precision", MAGENTA, "v")]
@@ -149,9 +192,11 @@ def main():
     root = Path(sys.argv[1])
     out = root / "figures"
     out.mkdir(exist_ok=True)
-    machine, gemm = load(root / "machine.csv"), load(root / "gemm.csv")
+    machine, gemm, attn = load(root / "machine.csv"), load(root / "gemm.csv"), load(root / "attn.csv")
     fig_gemm_ladder(gemm, machine, out)
     fig_gemm_roofline(gemm, machine, out)
+    fig_attn_scaling(attn, machine, out)
+    fig_attn_roofline(attn, machine, out)
     print("wrote", *sorted(p.name for p in out.glob("*.png")))
 
 

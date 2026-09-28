@@ -17,6 +17,8 @@ tune() {
 run --op machine --kernels fma --shapes 0 --threads 1 2 4 8 --out "$OUT/machine.csv"
 run --op machine --kernels triad --threads 1 8 --out "$OUT/machine.csv" --shapes \
   1024 2048 4096 8192 16384 32768 65536 131072 262144 524288 1048576 2097152 4194304 16777216
+# Loops with known memory traffic, to check the counter-based traffic estimate.
+run --op machine --kernels sum update fill --threads 1 8 --out "$OUT/machine.csv" --shapes 16777216
 
 # GEMM
 # The reference implementation is too slow for the larger shapes.
@@ -51,6 +53,10 @@ run --op attn --kernels mat mat_stream qblock tiled torch --threads 8 --reps 15 
   8x256x128 8x1024x128 8x2048x128 8x4096x128 8x8192x128
 # Thread scaling.
 run --op attn --kernels mat_stream tiled torch --threads 2 4 --out "$A" --shapes 8x2048x64
+
+# Where full-matrix attention reads memory. One row per phase.
+OMP_NUM_THREADS=8 OMP_PROC_BIND=true OMP_PLACES="{0},{2},{4},{6},{8},{10},{12},{14}" \
+  build/attn_phases 8192 > "$OUT/attn_phases.csv"
 
 # Autotuning. Each search ends by measuring its winner again against the defaults.
 T="$OUT/tune"

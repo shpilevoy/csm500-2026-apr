@@ -32,6 +32,9 @@ target_link_libraries(bench_gemm PRIVATE kernels ${CMAKE_DL_LIBS})
 add_executable(bench_attn bench/bench_attn.cpp)
 target_link_libraries(bench_attn PRIVATE kernels)
 
+add_executable(attn_phases bench/attn_phases.cpp)
+target_link_libraries(attn_phases PRIVATE kernels)
+
 add_executable(bench_machine bench/bench_machine.cpp)
 target_link_libraries(bench_machine PRIVATE kernels)
 
