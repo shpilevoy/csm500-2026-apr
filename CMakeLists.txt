@@ -15,7 +15,8 @@ add_compile_options(-march=native -Wall -Wextra)
 add_library(kernels
   src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp src/gemm_simd.cpp
   src/gemm_goto.cpp src/registry.cpp
-  src/attention_scalar.cpp src/attention.cpp)
+  src/attention_scalar.cpp src/attention.cpp
+  src/decode_scalar.cpp src/decode.cpp)
 target_include_directories(kernels PUBLIC src)
 target_link_libraries(kernels PUBLIC OpenMP::OpenMP_CXX)
 
@@ -23,7 +24,7 @@ target_link_libraries(kernels PUBLIC OpenMP::OpenMP_CXX)
 # that the SIMD stage is meant to measure.
 set_source_files_properties(
   src/gemm_ref.cpp src/gemm_naive.cpp src/gemm_blocked.cpp
-  src/attention_scalar.cpp PROPERTIES
+  src/attention_scalar.cpp src/decode_scalar.cpp PROPERTIES
   COMPILE_OPTIONS "-fno-tree-vectorize;-fno-tree-slp-vectorize")
 
 add_executable(bench_gemm bench/bench_gemm.cpp)
