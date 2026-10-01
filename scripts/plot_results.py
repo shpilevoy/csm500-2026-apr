@@ -188,6 +188,43 @@ DECODE = [("naive", "naive (scalar)", BLUE, "o"), ("simd", "AVX2, three passes",
           ("fused_f16", "AVX2, one pass, half precision", MAGENTA, "v")]
 
 
+def fig_decode(decode, machine, out):
+    """Decode-step attention against the size of the cached keys and values."""
+    peak, bw = ceilings(machine, 8)
+    dcd = medians(decode[(decode.threads == 8) & (decode.dim == 64)], ["kernel", "heads", "len", "dim"])
+    dcd["mib"] = dcd.heads * dcd.len * dcd.dim * 8 / 2**20  # keys and values, all heads
+    fig, ax = plt.subplots(figsize=(7.5, 4.4))
+    for kernel, label, color, marker in DECODE:
+        s = dcd[dcd.kernel == kernel].sort_values("len")
+        ax.plot(s.mib, s.gflops, color=color, marker=marker, label=label, markeredgecolor=SURFACE, markeredgewidth=1.2)
+    # Every byte of keys and values is read once for 0.5 operations.
+    # Half precision reads half the bytes, so its limit is twice as high.
+    for intensity, name, drop in ((0.5, "32 bit", -42), (1.0, "16 bit", 16)):
+        roof = intensity * bw
+        ax.axhline(roof, color=INK2, linewidth=1.2, linestyle=(0, (4, 3)))
+        ax.annotate(f"limit, {name} data: {intensity:g} FLOP/byte x {bw:.0f} GB/s = {roof:.0f}", (dcd.mib.max(), roof),
+                    xytext=(0, drop), textcoords="offset points", color=INK2, fontsize=9, ha="right",
+                    arrowprops={"arrowstyle": "-", "color": AXIS})
+    for size, name in ((4, "all L2 caches"), (16, "L3 cache")):
+        ax.axvline(size, color=AXIS, linewidth=1)
+        ax.annotate(name, (size, 1), xycoords=("data", "axes fraction"), xytext=(4, -12),
+                    textcoords="offset points", color=INK2, fontsize=9)
+    ax.set_xscale("log", base=2)
+    ax.set_yscale("log")
+    ticks = sorted(dcd.mib.unique())
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([f"{t:g}" for t in ticks])
+    ax.set_yticks([3, 5, 10, 20, 40, 80, 160])
+    ax.set_yticklabels(["3", "5", "10", "20", "40", "80", "160"])
+    ax.minorticks_off()
+    ax.set_xlabel("Cached keys and values, all heads, as 32 bit floats (MiB)")
+    ax.set_ylabel("GFLOP/s")
+    ax.set_title("Decode-step attention by size of the cached keys and values (8 threads)")
+    ax.legend(loc="lower left", fontsize=9)
+    fig.tight_layout()
+    fig.savefig(out / "decode_cache.png", dpi=200)
+
+
 def main():
     root = Path(sys.argv[1])
     out = root / "figures"
@@ -197,6 +234,8 @@ def main():
     fig_gemm_roofline(gemm, machine, out)
     fig_attn_scaling(attn, machine, out)
     fig_attn_roofline(attn, machine, out)
+    if (root / "decode.csv").exists():
+        fig_decode(load(root / "decode.csv"), machine, out)
     print("wrote", *sorted(p.name for p in out.glob("*.png")))
 
 

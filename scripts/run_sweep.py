@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OPS = {
     "gemm": (ROOT / "build" / "bench_gemm", ("m", "k", "n")),
     "attn": (ROOT / "build" / "bench_attn", ("heads", "len", "dim")),
+    "decode": (ROOT / "build" / "bench_decode", ("heads", "len", "dim")),
     "machine": (ROOT / "build" / "bench_machine", ("elems",)),
 }
 TORCH_ATTN = [sys.executable, str(ROOT / "scripts" / "bench_torch_attn.py")]
@@ -96,10 +97,10 @@ def main():
     ap.add_argument("--op", choices=OPS, default="gemm")
     ap.add_argument("--kernels", nargs="+", required=True,
                     help=f"our kernel names or baselines. gemm baselines are {', '.join(BLAS_LIBS)}. "
-                         f"attn baselines are {', '.join(TORCH_KERNELS)}. "
+                         f"attn and decode baselines are {', '.join(TORCH_KERNELS)}. "
                          "machine kernels are fma, triad, sum, update, fill")
     ap.add_argument("--shapes", nargs="+", required=True,
-                    help="gemm takes S for a square or MxKxN. attn takes HEADSxLENxDIM. "
+                    help="gemm takes S for a square or MxKxN. attn and decode take HEADSxLENxDIM. "
                          "machine takes floats per array")
     ap.add_argument("--set", nargs="+", default=[], metavar="PARAM=VALUE",
                     help="block or tile sizes for our kernels. causal=1 also applies to PyTorch")
@@ -124,7 +125,7 @@ def main():
     done = done_points(args.out, cols)
 
     for i, (kernel, shape, threads) in enumerate(points, 1):
-        torch = args.op == "attn" and kernel in TORCH_KERNELS
+        torch = args.op in ("attn", "decode") and kernel in TORCH_KERNELS
         baseline = torch or (args.op == "gemm" and kernel in BLAS_LIBS)
         # A library ignores our block sizes. The mask is the only setting it shares.
         settings = [kv for kv in args.set if kv == "causal=1"] if torch else [] if baseline else args.set
@@ -140,7 +141,7 @@ def main():
             "OMP_PROC_BIND": "true",
             "OMP_PLACES": ",".join(f"{{{c}}}" for c in cores[:threads]),
         }
-        cmd = TORCH_ATTN if torch else [str(bench)]
+        cmd = TORCH_ATTN + (["--decode"] if args.op == "decode" else []) if torch else [str(bench)]
         cmd = cmd + ["--kernel", kernel, "--reps", str(args.reps), "--out", str(args.out)]
         if args.op != "machine":
             cmd += ["--warmup", str(args.warmup)]

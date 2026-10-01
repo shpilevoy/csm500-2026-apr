@@ -33,6 +33,9 @@ target_link_libraries(bench_gemm PRIVATE kernels ${CMAKE_DL_LIBS})
 add_executable(bench_attn bench/bench_attn.cpp)
 target_link_libraries(bench_attn PRIVATE kernels)
 
+add_executable(bench_decode bench/bench_decode.cpp)
+target_link_libraries(bench_decode PRIVATE kernels)
+
 add_executable(attn_phases bench/attn_phases.cpp)
 target_link_libraries(attn_phases PRIVATE kernels)
 
@@ -45,6 +48,10 @@ target_link_libraries(test_gemm PRIVATE kernels)
 add_executable(test_attn tests/test_attn.cpp)
 target_link_libraries(test_attn PRIVATE kernels)
 
+add_executable(test_decode tests/test_decode.cpp)
+target_link_libraries(test_decode PRIVATE kernels)
+
 enable_testing()
 add_test(NAME gemm COMMAND test_gemm)
 add_test(NAME attn COMMAND test_attn)
+add_test(NAME decode COMMAND test_decode)

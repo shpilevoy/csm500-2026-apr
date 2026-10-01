@@ -54,6 +54,11 @@ run --op attn --kernels mat mat_stream qblock tiled torch --threads 8 --reps 15 
 # Thread scaling.
 run --op attn --kernels mat_stream tiled torch --threads 2 4 --out "$A" --shapes 8x2048x64
 
+# Decode-step attention. One query against L cached keys and values.
+D="$OUT/decode.csv"
+run --op decode --kernels naive simd fused fused_f16 torch --threads 1 8 --check --out "$D" --shapes \
+  8x64x64 8x256x64 8x1024x64 8x4096x64 8x16384x64 8x65536x64 8x262144x64
+
 # Where full-matrix attention reads memory. One row per phase.
 OMP_NUM_THREADS=8 OMP_PROC_BIND=true OMP_PLACES="{0},{2},{4},{6},{8},{10},{12},{14}" \
   build/attn_phases 8192 > "$OUT/attn_phases.csv"
