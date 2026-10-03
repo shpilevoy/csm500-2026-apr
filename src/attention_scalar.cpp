@@ -8,6 +8,7 @@
 void attn_ref(int H, int L, int d, const float* Q, const float* K,
               const float* V, float* O) {
   const double scale = 1.0 / std::sqrt(static_cast<double>(d));
+  const bool causal = attn_params().causal != 0;
   std::vector<double> s(L), o(d);
   for (int h = 0; h < H; ++h) {
     const float* q = Q + static_cast<std::size_t>(h) * L * d;
@@ -15,7 +16,7 @@ void attn_ref(int H, int L, int d, const float* Q, const float* K,
     const float* v = V + static_cast<std::size_t>(h) * L * d;
     float* out = O + static_cast<std::size_t>(h) * L * d;
     for (int i = 0; i < L; ++i) {
-      const int n = L;
+      const int n = causal ? i + 1 : L;
       double mx = -INFINITY;
       for (int j = 0; j < n; ++j) {
         double acc = 0.0;
@@ -40,6 +41,7 @@ void attn_ref(int H, int L, int d, const float* Q, const float* K,
 void attn_naive(int H, int L, int d, const float* Q, const float* K,
                 const float* V, float* O) {
   const float scale = 1.0f / std::sqrt(static_cast<float>(d));
+  const bool causal = attn_params().causal != 0;
 #pragma omp parallel for schedule(static)
   for (int h = 0; h < H; ++h) {
     const float* q = Q + static_cast<std::size_t>(h) * L * d;
@@ -55,7 +57,7 @@ void attn_naive(int H, int L, int d, const float* Q, const float* K,
       }
     }
     for (int i = 0; i < L; ++i) {
-      const int n = L;
+      const int n = causal ? i + 1 : L;
       float* s = &S[static_cast<std::size_t>(i) * L];
       float mx = s[0];
       for (int j = 1; j < n; ++j) mx = std::max(mx, s[j]);
@@ -68,7 +70,7 @@ void attn_naive(int H, int L, int d, const float* Q, const float* K,
       for (int j = 0; j < n; ++j) s[j] *= inv;
     }
     for (int i = 0; i < L; ++i) {
-      const int n = L;
+      const int n = causal ? i + 1 : L;
       const float* s = &S[static_cast<std::size_t>(i) * L];
       for (int c = 0; c < d; ++c) out[i * d + c] = 0.0f;
       for (int j = 0; j < n; ++j) {

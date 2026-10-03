@@ -11,8 +11,9 @@ int main() {
   const double tol = 1e-4;
   int failures = 0;
   // Tiny tiles hit every tile boundary.
-  for (const int pass : {0, 1}) {
-    const bool tiny_tiles = pass == 1;
+  for (const int pass : {0, 1, 2, 3}) {
+    const bool tiny_tiles = pass >= 2, causal = pass % 2 == 1;
+    attn_set_param("causal", causal);
     if (tiny_tiles) {
       attn_set_param("qb", 5);
       attn_set_param("tq", 7);
@@ -39,8 +40,8 @@ int main() {
         const double e = rel_err(O.get(), R.get(), n);
         const bool ok = e < tol;
         failures += !ok;
-        std::printf("%-4s %-10s %s spread=%g H=%d L=%d d=%d rel_err=%.2e\n", ok ? "ok" : "FAIL", k.name,
-                    tiny_tiles ? "tiny" : "dflt", spread, H, L, d, e);
+        std::printf("%-4s %-10s %s %s spread=%g H=%d L=%d d=%d rel_err=%.2e\n", ok ? "ok" : "FAIL", k.name,
+                    tiny_tiles ? "tiny" : "dflt", causal ? "causal" : "full  ", spread, H, L, d, e);
       }
     }
     }

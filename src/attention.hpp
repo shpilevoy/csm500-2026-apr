@@ -28,11 +28,12 @@ void attn_qblock(int H, int L, int d, const float* Q, const float* K,
 void attn_tiled(int H, int L, int d, const float* Q, const float* K,
                 const float* V, float* O);
 
-// Tile sizes in rows.
+// Tile sizes in rows and the switch for the causal mask.
 struct AttnParams {
   int qb = 0;  // 0 means as many rows as keep the score tile within kScoreTileFloats
   int tq = 192;
   int tk = 256;
+  int causal = 0;
 };
 inline constexpr int kScoreTileFloats = 64 * 1024;  // 256 KiB, half of L2
 AttnParams& attn_params();

@@ -12,15 +12,21 @@ namespace {
 // Computes output rows [q0, q0 + rows) of one head. Kp and Vp are its packed
 // transposed keys and packed values. S holds the scores.
 void attn_rows(int L, int d, const float* Q, const float* Kp, const float* Vp,
-               float* O, int q0, int rows, float* S, float* inv_sum, bool stream) {
+               float* O, int q0, int rows, float* S, float* inv_sum, bool stream,
+               bool causal) {
   const float scale = 1.0f / std::sqrt(static_cast<float>(d));
   float* o = O + static_cast<std::size_t>(q0) * d;
-  const int n = L;
+  // A causal strip needs only its first q0 + rows keys. The operands were
+  // packed for all L keys. A shorter product can reuse them only if it ends
+  // on a kc block boundary and d fits in one block. So n is rounded up to kc.
+  int n = L;
+  const int kc = gemm_params().kc;
+  if (causal && d <= kc) n = std::min(L, (q0 + rows + kc - 1) / kc * kc);
   gemm_packed(rows, n, d, Q + static_cast<std::size_t>(q0) * d, d, nullptr, 0, S, L,
               {.stream_c = stream, .packed_b = Kp});
   for (int r = 0; r < rows; ++r) {
     float* s = S + static_cast<std::size_t>(r) * L;
-    const int valid = n;
+    const int valid = causal ? std::min(n, q0 + r + 1) : n;
     inv_sum[r] = 1.0f / row_exp(s, valid, scale, row_max(s, valid) * scale);
     std::fill(s + valid, s + n, 0.0f);
   }
@@ -53,7 +59,7 @@ void attn_query_blocked(int H, int L, int d, const float* Q, const float* K,
         float* const S = scratch.get(static_cast<std::size_t>(qb) * L + qb);
         const float* Kp = P + h * (k_size + v_size);
         attn_rows(L, d, Q + h * head, Kp, Kp + k_size, O + h * head, q0, rows, S,
-                  S + static_cast<std::size_t>(qb) * L, stream);
+                  S + static_cast<std::size_t>(qb) * L, stream, attn_params().causal != 0);
       }
     }
   }
@@ -84,6 +90,7 @@ void attn_tiled(int H, int L, int d, const float* Q, const float* K,
   const float scale = 1.0f / std::sqrt(static_cast<float>(d));
   const std::size_t head = static_cast<std::size_t>(L) * d;
   const int blocks = (L + TQ - 1) / TQ, key_tiles = (L + TK - 1) / TK;
+  const bool causal = attn_params().causal != 0;
   const std::size_t k_size = gemm_packed_b_size(TK, d), v_size = gemm_packed_b_size(d, TK);
   const std::size_t slot = k_size + v_size;
   static Scratch packed;
@@ -113,14 +120,15 @@ void attn_tiled(int H, int L, int d, const float* Q, const float* K,
         std::fill(run_max, run_max + rows, -INFINITY);
         std::fill(run_sum, run_sum + rows, 0.0f);
 
-        const int tiles = key_tiles;
+        // Key tiles that start after the last query of the block are fully masked.
+        const int tiles = causal ? std::min(key_tiles, (q0 + rows - 1) / TK + 1) : key_tiles;
         for (int t = 0; t < tiles; ++t) {
           const int k0 = t * TK, cols = std::min(TK, L - k0);
           const float* p = P + (static_cast<std::size_t>(h) * key_tiles + t) * slot;
           gemm_packed(rows, cols, d, q, d, nullptr, 0, S, cols, {.packed_b = p});
           for (int r = 0; r < rows; ++r) {
             float* s = S + static_cast<std::size_t>(r) * cols;
-            const int valid = cols;
+            const int valid = causal ? std::clamp(q0 + r + 1 - k0, 0, cols) : cols;
             std::fill(s + valid, s + cols, 0.0f);
             if (valid == 0) continue;
             const float new_max = std::max(run_max[r], row_max(s, valid) * scale);
@@ -170,6 +178,10 @@ AttnParams& attn_params() {
 
 bool attn_set_param(std::string_view name, int value) {
   AttnParams& p = attn_params();
+  if (name == "causal" && (value == 0 || value == 1)) {
+    p.causal = value;
+    return true;
+  }
   if (value <= 0) return false;
   if (name == "qb") p.qb = value;
   else if (name == "tq") p.tq = value;

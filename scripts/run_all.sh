@@ -53,6 +53,12 @@ run --op attn --kernels mat mat_stream qblock tiled torch --threads 8 --reps 15 
   8x256x128 8x1024x128 8x2048x128 8x4096x128 8x8192x128
 # Thread scaling.
 run --op attn --kernels mat_stream tiled torch --threads 2 4 --out "$A" --shapes 8x2048x64
+# Causal mask, as in a language model.
+run --op attn --kernels mat_stream qblock tiled torch torch_direct --set causal=1 --threads 8 --check --out "$A" --shapes \
+  8x512x64 8x1024x64 8x2048x64
+run --op attn --kernels mat_stream qblock tiled torch torch_direct --set causal=1 --threads 8 --reps 15 --warmup 3 \
+  --out "$A" --shapes 8x4096x64 8x8192x64
+run --op attn --kernels naive --set causal=1 --threads 8 --reps 10 --warmup 2 --check --out "$A" --shapes 8x512x64 8x1024x64
 
 # Decode-step attention. One query against L cached keys and values.
 D="$OUT/decode.csv"

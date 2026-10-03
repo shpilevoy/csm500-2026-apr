@@ -17,7 +17,8 @@ namespace {
                "usage: bench_attn --kernel NAME --heads H --len L --dim D\n"
                "                  [--reps R] [--warmup W] [--set PARAM=VALUE]...\n"
                "                  [--check] [--out FILE]\n"
-               "  --set       override a tile size (qb tq tk, or GEMM mc kc nc)\n"
+               "  --set       override a tile size (qb tq tk, or GEMM mc kc nc), or\n"
+               "              causal=1 for a causal mask\n"
                "  --check     also report the error against the reference implementation\n");
   std::exit(2);
 }
@@ -88,8 +89,9 @@ int main(int argc, char** argv) {
   }
 
   // By convention only the two matrix products count as FLOPs, with 2*d per
-  // score each. The softmax does not count.
-  const double scores = 1.0 * L * L;
+  // score each. The softmax does not count. With a causal mask only the
+  // L(L+1)/2 unmasked scores count.
+  const double scores = attn_params().causal ? 0.5 * L * (L + 1.0) : 1.0 * L * L;
   const double flops = 4.0 * H * scores * d;
   Recorder rec(out, "kernel,params,heads,len,dim,threads");
   const std::string values = kernel + "," + params + "," + std::to_string(H) + "," +
