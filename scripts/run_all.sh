@@ -34,6 +34,11 @@ run --kernels reorder blocked --shapes 2048 --threads 1 --out "$G"
 run --kernels naive --shapes 256 512 1024 512x4096x512 --threads 1 --reps 10 --warmup 2 --check --out "$G"
 # One slow point so that every stage of the ladder is measured at the same size.
 run --kernels naive --shapes 2048 --threads 1 --reps 3 --warmup 1 --out "$G"
+# Block sizes worked out from the cache sizes, next to the defaults copied from BLIS.
+run --kernels goto --set $(.venv/bin/python scripts/analytic_blocks.py --settings) \
+  --shapes 2048 1024x768x3072 256x64x1024 --threads 1 --out "$G"
+run --kernels goto_mt --set $(.venv/bin/python scripts/analytic_blocks.py --threads 8 --settings) \
+  --shapes 2048 1024x768x3072 --threads 8 --out "$G"
 run --kernels goto_mt openblas blis --shapes $SMALL 2048 4096 --threads 8 --out "$G"
 run --kernels goto_mt openblas blis --shapes 2048 --threads 1 2 4 --out "$G"
 
