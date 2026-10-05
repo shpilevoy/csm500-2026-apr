@@ -24,8 +24,8 @@ run --op machine --kernels sum update fill --threads 1 8 --out "$OUT/machine.csv
 # The reference implementation is too slow for the larger shapes.
 SMALL="256 512 1024 512x4096x512 1024x768x3072 1024x3072x768 256x64x1024"
 G="$OUT/gemm.csv"
-run --kernels goto simd openblas blis --shapes $SMALL --threads 1 --check --out "$G"
-run --kernels goto simd openblas blis --shapes 2048 4096 --threads 1 --out "$G"
+run --kernels goto simd openblas blis onednn --shapes $SMALL --threads 1 --check --out "$G"
+run --kernels goto simd openblas blis onednn --shapes 2048 4096 --threads 1 --out "$G"
 # simd with blocking switched off, to separate the two effects.
 run --kernels simd --set bk=1000000 bn=1000000 --shapes $SMALL --threads 1 --check --out "$G"
 run --kernels simd --set bk=1000000 bn=1000000 --shapes 2048 4096 --threads 1 --out "$G"
@@ -39,8 +39,8 @@ run --kernels goto --set $(.venv/bin/python scripts/analytic_blocks.py --setting
   --shapes 2048 1024x768x3072 256x64x1024 --threads 1 --out "$G"
 run --kernels goto_mt --set $(.venv/bin/python scripts/analytic_blocks.py --threads 8 --settings) \
   --shapes 2048 1024x768x3072 --threads 8 --out "$G"
-run --kernels goto_mt openblas blis --shapes $SMALL 2048 4096 --threads 8 --out "$G"
-run --kernels goto_mt openblas blis --shapes 2048 --threads 1 2 4 --out "$G"
+run --kernels goto_mt openblas blis onednn --shapes $SMALL 2048 4096 --threads 8 --out "$G"
+run --kernels goto_mt openblas blis onednn --shapes 2048 --threads 1 2 4 --out "$G"
 
 # Attention
 A="$OUT/attn.csv"
@@ -73,6 +73,8 @@ run --op decode --kernels naive simd fused fused_f16 torch --threads 1 8 --check
 # Where full-matrix attention reads memory. One row per phase.
 OMP_NUM_THREADS=8 OMP_PROC_BIND=true OMP_PLACES="{0},{2},{4},{6},{8},{10},{12},{14}" \
   build/attn_phases 8192 > "$OUT/attn_phases.csv"
+
+.venv/bin/python scripts/check_torch_dispatch.py --out "$OUT/torch_dispatch.csv" > /dev/null 2>&1
 
 # Autotuning. Each search ends by measuring its winner again against the defaults.
 T="$OUT/tune"

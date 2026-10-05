@@ -32,6 +32,7 @@ LIB_DIR = Path("/usr/lib/x86_64-linux-gnu")
 BLAS_LIBS = {
     "openblas": ("--blas-lib", LIB_DIR / "openblas-openmp" / "libopenblas.so.0"),
     "blis": ("--blas-lib", LIB_DIR / "blis-openmp" / "libblis.so.4"),
+    "onednn": ("--dnnl-lib", LIB_DIR / "libdnnl.so.3.9"),
 }
 
 
