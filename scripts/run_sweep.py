@@ -4,6 +4,8 @@ Points run in shuffled order, so slow drift does not line up with one kernel.
 Finished points are skipped, so a sweep can resume after an interruption.
 """
 import argparse
+import hashlib
+import importlib.metadata
 import csv
 import glob
 import json
@@ -51,6 +53,43 @@ def read(path):
         return None
 
 
+def fingerprint(paths):
+    digest = hashlib.sha256()
+    for path in sorted(paths):
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()[:16]
+
+
+def source_fingerprint():
+    """One hash over the kernel and benchmark sources. It ties results to the code that made them."""
+    return fingerprint([*ROOT.glob("src/*"), *ROOT.glob("bench/*"), ROOT / "CMakeLists.txt"])
+
+
+def check_provenance(out, info):
+    """Stops a resumed sweep from adding rows made by different code to an existing results file."""
+    sidecar = out.with_suffix(".machine.json")
+    if out.exists() and sidecar.exists():
+        old = json.loads(sidecar.read_text()).get("source_sha256")
+        if old and old != info["source_sha256"]:
+            raise SystemExit(f"{out} was measured with source {old} but the source is now {info['source_sha256']}. "
+                             "Use a new results directory.")
+    sidecar.write_text(json.dumps(info, indent=2) + "\n")
+
+
+def package_versions():
+    """Versions of the baseline libraries, as the package manager reports them."""
+    packages = ["libopenblas-openmp-dev", "libblis-dev", "libdnnl-dev", "cmake"]
+    result = subprocess.run(["dpkg-query", "-W", *packages], capture_output=True, text=True)
+    versions = dict(line.split("\t") for line in result.stdout.splitlines() if "\t" in line)
+    for module in ("torch", "numpy", "pandas"):
+        try:
+            versions[module] = importlib.metadata.version(module)
+        except importlib.metadata.PackageNotFoundError:
+            versions[module] = None
+    return versions
+
+
 def machine_info():
     """Describes the machine and its settings. Saved next to the results."""
     cpu = next((line.split(":", 1)[1].strip() for line in Path("/proc/cpuinfo").read_text().splitlines()
@@ -68,6 +107,10 @@ def machine_info():
         "compiler": subprocess.run(["c++", "--version"], capture_output=True, text=True).stdout.splitlines()[0],
         "blas_libs": {name: os.path.realpath(path) for name, (_, path) in BLAS_LIBS.items()},
         "python": platform.python_version(),
+        "versions": package_versions(),
+        "source_sha256": source_fingerprint(),
+        "scripts_sha256": fingerprint([*ROOT.glob("scripts/*.py"), *ROOT.glob("scripts/*.sh")]),
+        "binaries_sha256": fingerprint([p for p in (ROOT / "build").glob("bench_*") if p.is_file()]),
     }
 
 
@@ -117,7 +160,7 @@ def main():
         ap.error(f"at most {len(cores)} threads: one per physical core")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.with_suffix(".machine.json").write_text(json.dumps(machine_info(), indent=2) + "\n")
+    check_provenance(args.out, machine_info())
 
     bench, cols = OPS[args.op]
     shapes = [parse_shape(text, len(cols)) for text in args.shapes]

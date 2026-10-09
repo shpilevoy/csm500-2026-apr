@@ -55,3 +55,7 @@ enable_testing()
 add_test(NAME gemm COMMAND test_gemm)
 add_test(NAME attn COMMAND test_attn)
 add_test(NAME decode COMMAND test_decode)
+# Tests of the harness. They need the Python environment from the README.
+add_test(NAME harness
+  COMMAND ${CMAKE_SOURCE_DIR}/.venv/bin/python -m pytest -q ${CMAKE_SOURCE_DIR}/tests
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
