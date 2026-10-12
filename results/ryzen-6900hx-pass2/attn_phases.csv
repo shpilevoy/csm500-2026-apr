@@ -1,0 +1,7 @@
+stores,phase,seconds,reads_of_table
+regular,1 write scores,0.175,2.85
+regular,2 in-place pass,0.086,0.93
+regular,3 read scores,0.155,3.40
+streaming,1 write scores,0.092,0.08
+streaming,2 in-place pass,0.087,0.95
+streaming,3 read scores,0.157,3.40

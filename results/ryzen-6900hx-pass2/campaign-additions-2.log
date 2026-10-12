@@ -1,0 +1,393 @@
+[1/4] fma 0 threads=4  - already done
+[2/4] fma 0 threads=1  - already done
+[3/4] fma 0 threads=2  - already done
+[4/4] fma 0 threads=8  - already done
+[1/28] triad 2048 threads=8  - already done
+[2/28] triad 131072 threads=1  - already done
+[3/28] triad 32768 threads=1  - already done
+[4/28] triad 262144 threads=8  - already done
+[5/28] triad 4096 threads=8  - already done
+[6/28] triad 1024 threads=1  - already done
+[7/28] triad 8192 threads=8  - already done
+[8/28] triad 1048576 threads=8  - already done
+[9/28] triad 524288 threads=8  - already done
+[10/28] triad 524288 threads=1  - already done
+[11/28] triad 2097152 threads=8  - already done
+[12/28] triad 4194304 threads=8  - already done
+[13/28] triad 4096 threads=1  - already done
+[14/28] triad 2048 threads=1  - already done
+[15/28] triad 2097152 threads=1  - already done
+[16/28] triad 8192 threads=1  - already done
+[17/28] triad 32768 threads=8  - already done
+[18/28] triad 1048576 threads=1  - already done
+[19/28] triad 16384 threads=8  - already done
+[20/28] triad 16777216 threads=1  - already done
+[21/28] triad 131072 threads=8  - already done
+[22/28] triad 262144 threads=1  - already done
+[23/28] triad 16384 threads=1  - already done
+[24/28] triad 1024 threads=8  - already done
+[25/28] triad 65536 threads=8  - already done
+[26/28] triad 4194304 threads=1  - already done
+[27/28] triad 65536 threads=1  - already done
+[28/28] triad 16777216 threads=8  - already done
+[1/6] fill 16777216 threads=1  - already done
+[2/6] update 16777216 threads=1  - already done
+[3/6] sum 16777216 threads=8  - already done
+[4/6] sum 16777216 threads=1  - already done
+[5/6] fill 16777216 threads=8  - already done
+[6/6] update 16777216 threads=8  - already done
+[1/35] simd 256x256x256 threads=1  - already done
+[2/35] goto 256x256x256 threads=1  - already done
+[3/35] blis 256x64x1024 threads=1  - already done
+[4/35] openblas 256x64x1024 threads=1  - already done
+[5/35] simd 512x4096x512 threads=1  - already done
+[6/35] goto 1024x3072x768 threads=1  - already done
+[7/35] blis 256x256x256 threads=1  - already done
+[8/35] simd 256x64x1024 threads=1  - already done
+[9/35] goto 512x512x512 threads=1  - already done
+[10/35] openblas 512x4096x512 threads=1  - already done
+[11/35] onednn 1024x768x3072 threads=1  - already done
+[12/35] blis 512x512x512 threads=1  - already done
+[13/35] blis 1024x1024x1024 threads=1  - already done
+[14/35] onednn 256x64x1024 threads=1  - already done
+[15/35] openblas 256x256x256 threads=1  - already done
+[16/35] simd 512x512x512 threads=1  - already done
+[17/35] goto 512x4096x512 threads=1  - already done
+[18/35] openblas 1024x3072x768 threads=1  - already done
+[19/35] onednn 1024x3072x768 threads=1  - already done
+[20/35] goto 1024x768x3072 threads=1  - already done
+[21/35] onednn 512x512x512 threads=1  - already done
+[22/35] goto 256x64x1024 threads=1  - already done
+[23/35] openblas 1024x768x3072 threads=1  - already done
+[24/35] simd 1024x768x3072 threads=1  - already done
+[25/35] onednn 256x256x256 threads=1  - already done
+[26/35] simd 1024x1024x1024 threads=1  - already done
+[27/35] blis 1024x768x3072 threads=1  - already done
+[28/35] simd 1024x3072x768 threads=1  - already done
+[29/35] openblas 512x512x512 threads=1  - already done
+[30/35] onednn 512x4096x512 threads=1  - already done
+[31/35] onednn 1024x1024x1024 threads=1  - already done
+[32/35] openblas 1024x1024x1024 threads=1  - already done
+[33/35] goto 1024x1024x1024 threads=1  - already done
+[34/35] blis 1024x3072x768 threads=1  - already done
+[35/35] blis 512x4096x512 threads=1  - already done
+[1/10] blis 4096x4096x4096 threads=1  - already done
+[2/10] onednn 2048x2048x2048 threads=1  - already done
+[3/10] goto 4096x4096x4096 threads=1  - already done
+[4/10] openblas 4096x4096x4096 threads=1  - already done
+[5/10] simd 4096x4096x4096 threads=1  - already done
+[6/10] openblas 2048x2048x2048 threads=1  - already done
+[7/10] simd 2048x2048x2048 threads=1  - already done
+[8/10] goto 2048x2048x2048 threads=1  - already done
+[9/10] onednn 4096x4096x4096 threads=1  - already done
+[10/10] blis 2048x2048x2048 threads=1  - already done
+[1/7] simd 1024x768x3072 threads=1 bk=1000000;bn=1000000 - already done
+[2/7] simd 1024x1024x1024 threads=1 bk=1000000;bn=1000000 - already done
+[3/7] simd 512x512x512 threads=1 bk=1000000;bn=1000000 - already done
+[4/7] simd 256x256x256 threads=1 bk=1000000;bn=1000000 - already done
+[5/7] simd 1024x3072x768 threads=1 bk=1000000;bn=1000000 - already done
+[6/7] simd 512x4096x512 threads=1 bk=1000000;bn=1000000 - already done
+[7/7] simd 256x64x1024 threads=1 bk=1000000;bn=1000000 - already done
+[1/2] simd 2048x2048x2048 threads=1 bk=1000000;bn=1000000 - already done
+[2/2] simd 4096x4096x4096 threads=1 bk=1000000;bn=1000000 - already done
+[1/14] reorder 512x512x512 threads=1  - already done
+[2/14] blocked 512x4096x512 threads=1  - already done
+[3/14] blocked 1024x1024x1024 threads=1  - already done
+[4/14] reorder 1024x3072x768 threads=1  - already done
+[5/14] blocked 1024x768x3072 threads=1  - already done
+[6/14] reorder 1024x1024x1024 threads=1  - already done
+[7/14] reorder 512x4096x512 threads=1  - already done
+[8/14] blocked 256x256x256 threads=1  - already done
+[9/14] blocked 512x512x512 threads=1  - already done
+[10/14] reorder 1024x768x3072 threads=1  - already done
+[11/14] reorder 256x256x256 threads=1  - already done
+[12/14] blocked 1024x3072x768 threads=1  - already done
+[13/14] reorder 256x64x1024 threads=1  - already done
+[14/14] blocked 256x64x1024 threads=1  - already done
+[1/2] reorder 2048x2048x2048 threads=1  - already done
+[2/2] blocked 2048x2048x2048 threads=1  - already done
+[1/4] naive 1024x1024x1024 threads=1  - already done
+[2/4] naive 256x256x256 threads=1  - already done
+[3/4] naive 512x512x512 threads=1  - already done
+[4/4] naive 512x4096x512 threads=1  - already done
+[1/1] naive 2048x2048x2048 threads=1 
+[1/3] goto 2048x2048x2048 threads=1 mc=342;kc=320;nc=12288
+[2/3] goto 256x64x1024 threads=1 mc=342;kc=320;nc=12288
+[3/3] goto 1024x768x3072 threads=1 mc=342;kc=320;nc=12288
+[1/2] goto_mt 2048x2048x2048 threads=8 mc=342;kc=320;nc=1536
+[2/2] goto_mt 1024x768x3072 threads=8 mc=342;kc=320;nc=1536
+[1/36] goto_mt 256x256x256 threads=8  - already done
+[2/36] blis 512x512x512 threads=8  - already done
+[3/36] openblas 1024x3072x768 threads=8  - already done
+[4/36] blis 512x4096x512 threads=8  - already done
+[5/36] blis 1024x768x3072 threads=8  - already done
+[6/36] openblas 4096x4096x4096 threads=8  - already done
+[7/36] onednn 256x64x1024 threads=8  - already done
+[8/36] onednn 512x4096x512 threads=8  - already done
+[9/36] goto_mt 2048x2048x2048 threads=8  - already done
+[10/36] goto_mt 1024x3072x768 threads=8  - already done
+[11/36] openblas 512x512x512 threads=8  - already done
+[12/36] openblas 1024x768x3072 threads=8  - already done
+[13/36] onednn 4096x4096x4096 threads=8  - already done
+[14/36] goto_mt 512x512x512 threads=8  - already done
+[15/36] onednn 512x512x512 threads=8  - already done
+[16/36] blis 1024x3072x768 threads=8  - already done
+[17/36] goto_mt 4096x4096x4096 threads=8  - already done
+[18/36] goto_mt 512x4096x512 threads=8  - already done
+[19/36] blis 1024x1024x1024 threads=8  - already done
+[20/36] onednn 256x256x256 threads=8  - already done
+[21/36] goto_mt 1024x768x3072 threads=8  - already done
+[22/36] onednn 1024x3072x768 threads=8  - already done
+[23/36] goto_mt 256x64x1024 threads=8  - already done
+[24/36] blis 256x256x256 threads=8  - already done
+[25/36] openblas 1024x1024x1024 threads=8  - already done
+[26/36] openblas 256x64x1024 threads=8  - already done
+[27/36] openblas 256x256x256 threads=8  - already done
+[28/36] onednn 2048x2048x2048 threads=8  - already done
+[29/36] blis 2048x2048x2048 threads=8  - already done
+[30/36] onednn 1024x1024x1024 threads=8  - already done
+[31/36] openblas 512x4096x512 threads=8  - already done
+[32/36] onednn 1024x768x3072 threads=8  - already done
+[33/36] openblas 2048x2048x2048 threads=8  - already done
+[34/36] goto_mt 1024x1024x1024 threads=8  - already done
+[35/36] blis 4096x4096x4096 threads=8  - already done
+[36/36] blis 256x64x1024 threads=8  - already done
+[1/12] goto_mt 2048x2048x2048 threads=2  - already done
+[2/12] onednn 2048x2048x2048 threads=1  - already done
+[3/12] blis 2048x2048x2048 threads=4  - already done
+[4/12] openblas 2048x2048x2048 threads=4  - already done
+[5/12] onednn 2048x2048x2048 threads=2  - already done
+[6/12] goto_mt 2048x2048x2048 threads=4  - already done
+[7/12] openblas 2048x2048x2048 threads=1  - already done
+[8/12] blis 2048x2048x2048 threads=2  - already done
+[9/12] openblas 2048x2048x2048 threads=2  - already done
+[10/12] goto_mt 2048x2048x2048 threads=1  - already done
+[11/12] onednn 2048x2048x2048 threads=4  - already done
+[12/12] blis 2048x2048x2048 threads=1  - already done
+[1/60] mat_stream 8x256x64 threads=1  - already done
+[2/60] tiled 8x256x64 threads=8  - already done
+[3/60] qblock 8x2048x64 threads=8  - already done
+[4/60] tiled 8x1024x64 threads=1  - already done
+[5/60] torch 8x512x64 threads=1  - already done
+[6/60] torch 8x256x64 threads=1  - already done
+[7/60] torch 8x1024x64 threads=8  - already done
+[8/60] mat 8x512x64 threads=8  - already done
+[9/60] mat 8x1024x64 threads=8  - already done
+[10/60] torch_direct 8x128x64 threads=1  - already done
+[11/60] torch_direct 8x512x64 threads=8  - already done
+[12/60] torch_direct 8x2048x64 threads=1  - already done
+[13/60] qblock 8x256x64 threads=8  - already done
+[14/60] qblock 8x1024x64 threads=8  - already done
+[15/60] qblock 8x2048x64 threads=1  - already done
+[16/60] torch_direct 8x2048x64 threads=8  - already done
+[17/60] mat 8x128x64 threads=1  - already done
+[18/60] mat 8x128x64 threads=8  - already done
+[19/60] torch 8x128x64 threads=8  - already done
+[20/60] tiled 8x2048x64 threads=1  - already done
+[21/60] mat_stream 8x512x64 threads=1  - already done
+[22/60] mat_stream 8x512x64 threads=8  - already done
+[23/60] torch_direct 8x128x64 threads=8  - already done
+[24/60] torch 8x1024x64 threads=1  - already done
+[25/60] qblock 8x128x64 threads=1  - already done
+[26/60] tiled 8x512x64 threads=8  - already done
+[27/60] mat_stream 8x128x64 threads=1  - already done
+[28/60] torch 8x512x64 threads=8  - already done
+[29/60] mat_stream 8x128x64 threads=8  - already done
+[30/60] mat 8x256x64 threads=8  - already done
+[31/60] mat_stream 8x1024x64 threads=8  - already done
+[32/60] torch_direct 8x1024x64 threads=8  - already done
+[33/60] qblock 8x128x64 threads=8  - already done
+[34/60] mat 8x512x64 threads=1  - already done
+[35/60] torch 8x128x64 threads=1  - already done
+[36/60] torch 8x2048x64 threads=8  - already done
+[37/60] mat 8x2048x64 threads=8  - already done
+[38/60] tiled 8x512x64 threads=1  - already done
+[39/60] torch_direct 8x256x64 threads=8  - already done
+[40/60] tiled 8x2048x64 threads=8  - already done
+[41/60] mat 8x1024x64 threads=1  - already done
+[42/60] torch 8x256x64 threads=8  - already done
+[43/60] mat_stream 8x2048x64 threads=1  - already done
+[44/60] mat 8x2048x64 threads=1  - already done
+[45/60] torch_direct 8x256x64 threads=1  - already done
+[46/60] mat_stream 8x256x64 threads=8  - already done
+[47/60] tiled 8x1024x64 threads=8  - already done
+[48/60] qblock 8x256x64 threads=1  - already done
+[49/60] tiled 8x128x64 threads=1  - already done
+[50/60] mat_stream 8x2048x64 threads=8  - already done
+[51/60] qblock 8x512x64 threads=8  - already done
+[52/60] tiled 8x128x64 threads=8  - already done
+[53/60] tiled 8x256x64 threads=1  - already done
+[54/60] mat_stream 8x1024x64 threads=1  - already done
+[55/60] mat 8x256x64 threads=1  - already done
+[56/60] qblock 8x1024x64 threads=1  - already done
+[57/60] torch_direct 8x1024x64 threads=1  - already done
+[58/60] torch 8x2048x64 threads=1  - already done
+[59/60] qblock 8x512x64 threads=1  - already done
+[60/60] torch_direct 8x512x64 threads=1  - already done
+[1/12] mat 8x4096x64 threads=8  - already done
+[2/12] torch 8x4096x64 threads=8  - already done
+[3/12] torch 8x4096x64 threads=1  - already done
+[4/12] qblock 8x4096x64 threads=8  - already done
+[5/12] torch_direct 8x4096x64 threads=1  - already done
+[6/12] mat_stream 8x4096x64 threads=1  - already done
+[7/12] mat_stream 8x4096x64 threads=8  - already done
+[8/12] tiled 8x4096x64 threads=8  - already done
+[9/12] qblock 8x4096x64 threads=1  - already done
+[10/12] mat 8x4096x64 threads=1  - already done
+[11/12] torch_direct 8x4096x64 threads=8  - already done
+[12/12] tiled 8x4096x64 threads=1  - already done
+[1/8] naive 8x512x64 threads=1  - already done
+[2/8] naive 8x128x64 threads=8  - already done
+[3/8] naive 8x512x64 threads=8  - already done
+[4/8] naive 8x256x64 threads=1  - already done
+[5/8] naive 8x128x64 threads=1  - already done
+[6/8] naive 8x256x64 threads=8  - already done
+[7/8] naive 8x1024x64 threads=8  - already done
+[8/8] naive 8x1024x64 threads=1  - already done
+[1/6] torch 8x8192x64 threads=8  - already done
+[2/6] qblock 8x8192x64 threads=8  - already done
+[3/6] mat_stream 8x8192x64 threads=8  - already done
+[4/6] mat 8x8192x64 threads=8  - already done
+[5/6] torch_direct 8x8192x64 threads=8  - already done
+[6/6] tiled 8x8192x64 threads=8  - already done
+[1/5] qblock 8x8192x64 threads=1  - already done
+[2/5] mat_stream 8x8192x64 threads=1  - already done
+[3/5] mat 8x8192x64 threads=1  - already done
+[4/5] torch 8x8192x64 threads=1  - already done
+[5/5] tiled 8x8192x64 threads=1  - already done
+[1/2] qblock 8x16384x64 threads=8  - already done
+[2/2] tiled 8x16384x64 threads=8  - already done
+[1/25] qblock 8x8192x128 threads=8  - already done
+[2/25] mat 8x256x128 threads=8  - already done
+[3/25] torch 8x4096x128 threads=8  - already done
+[4/25] tiled 8x4096x128 threads=8  - already done
+[5/25] mat_stream 8x1024x128 threads=8  - already done
+[6/25] mat_stream 8x256x128 threads=8  - already done
+[7/25] mat_stream 8x2048x128 threads=8  - already done
+[8/25] qblock 8x256x128 threads=8  - already done
+[9/25] torch 8x2048x128 threads=8  - already done
+[10/25] torch 8x256x128 threads=8  - already done
+[11/25] mat 8x8192x128 threads=8  - already done
+[12/25] mat 8x2048x128 threads=8  - already done
+[13/25] torch 8x1024x128 threads=8  - already done
+[14/25] mat 8x4096x128 threads=8  - already done
+[15/25] tiled 8x2048x128 threads=8  - already done
+[16/25] qblock 8x1024x128 threads=8  - already done
+[17/25] tiled 8x8192x128 threads=8  - already done
+[18/25] mat_stream 8x8192x128 threads=8  - already done
+[19/25] torch 8x8192x128 threads=8  - already done
+[20/25] tiled 8x256x128 threads=8  - already done
+[21/25] tiled 8x1024x128 threads=8  - already done
+[22/25] mat_stream 8x4096x128 threads=8  - already done
+[23/25] mat 8x1024x128 threads=8  - already done
+[24/25] qblock 8x4096x128 threads=8  - already done
+[25/25] qblock 8x2048x128 threads=8  - already done
+[1/6] torch 8x2048x64 threads=2  - already done
+[2/6] tiled 8x2048x64 threads=2  - already done
+[3/6] mat_stream 8x2048x64 threads=4  - already done
+[4/6] mat_stream 8x2048x64 threads=2  - already done
+[5/6] torch 8x2048x64 threads=4  - already done
+[6/6] tiled 8x2048x64 threads=4  - already done
+[1/15] mat_stream 8x1024x64 threads=8 causal=1 - already done
+[2/15] torch 8x1024x64 threads=8 causal=1 - already done
+[3/15] torch 8x512x64 threads=8 causal=1 - already done
+[4/15] qblock 8x2048x64 threads=8 causal=1 - already done
+[5/15] torch 8x2048x64 threads=8 causal=1 - already done
+[6/15] mat_stream 8x2048x64 threads=8 causal=1 - already done
+[7/15] qblock 8x512x64 threads=8 causal=1 - already done
+[8/15] tiled 8x1024x64 threads=8 causal=1 - already done
+[9/15] tiled 8x2048x64 threads=8 causal=1 - already done
+[10/15] qblock 8x1024x64 threads=8 causal=1 - already done
+[11/15] mat_stream 8x512x64 threads=8 causal=1 - already done
+[12/15] torch_direct 8x2048x64 threads=8 causal=1 - already done
+[13/15] torch_direct 8x512x64 threads=8 causal=1 - already done
+[14/15] tiled 8x512x64 threads=8 causal=1 - already done
+[15/15] torch_direct 8x1024x64 threads=8 causal=1 - already done
+[1/10] torch 8x8192x64 threads=8 causal=1 - already done
+[2/10] torch_direct 8x4096x64 threads=8 causal=1 - already done
+[3/10] mat_stream 8x8192x64 threads=8 causal=1 - already done
+[4/10] tiled 8x8192x64 threads=8 causal=1 - already done
+[5/10] qblock 8x8192x64 threads=8 causal=1 - already done
+[6/10] tiled 8x4096x64 threads=8 causal=1 - already done
+[7/10] qblock 8x4096x64 threads=8 causal=1 - already done
+[8/10] mat_stream 8x4096x64 threads=8 causal=1 - already done
+[9/10] torch_direct 8x8192x64 threads=8 causal=1 - already done
+[10/10] torch 8x4096x64 threads=8 causal=1 - already done
+[1/2] naive 8x512x64 threads=8 causal=1 - already done
+[2/2] naive 8x1024x64 threads=8 causal=1 - already done
+[1/70] fused 8x64x64 threads=1  - already done
+[2/70] torch 8x1024x64 threads=8  - already done
+[3/70] torch 8x65536x64 threads=8  - already done
+[4/70] fused_f16 8x64x64 threads=1 
+[5/70] fused 8x64x64 threads=8  - already done
+[6/70] fused 8x262144x64 threads=1  - already done
+[7/70] fused 8x16384x64 threads=1  - already done
+[8/70] torch 8x64x64 threads=1  - already done
+[9/70] fused_f16 8x65536x64 threads=1 
+[10/70] fused 8x256x64 threads=8  - already done
+[11/70] fused_f16 8x64x64 threads=8 
+[12/70] naive 8x256x64 threads=8  - already done
+[13/70] simd 8x262144x64 threads=1  - already done
+[14/70] fused_f16 8x262144x64 threads=1 
+[15/70] naive 8x65536x64 threads=8  - already done
+[16/70] simd 8x65536x64 threads=1  - already done
+[17/70] naive 8x4096x64 threads=8  - already done
+[18/70] naive 8x65536x64 threads=1  - already done
+[19/70] simd 8x64x64 threads=8  - already done
+[20/70] simd 8x16384x64 threads=8  - already done
+[21/70] torch 8x65536x64 threads=1  - already done
+[22/70] naive 8x262144x64 threads=1  - already done
+[23/70] naive 8x256x64 threads=1  - already done
+[24/70] naive 8x64x64 threads=1  - already done
+[25/70] simd 8x256x64 threads=8  - already done
+[26/70] simd 8x65536x64 threads=8  - already done
+[27/70] naive 8x64x64 threads=8  - already done
+[28/70] torch 8x4096x64 threads=8  - already done
+[29/70] fused_f16 8x1024x64 threads=8 
+[30/70] fused_f16 8x1024x64 threads=1 
+[31/70] simd 8x64x64 threads=1  - already done
+[32/70] fused_f16 8x256x64 threads=1 
+[33/70] fused_f16 8x262144x64 threads=8 
+[34/70] simd 8x4096x64 threads=1  - already done
+[35/70] simd 8x262144x64 threads=8  - already done
+[36/70] torch 8x64x64 threads=8  - already done
+[37/70] fused 8x262144x64 threads=8  - already done
+[38/70] fused 8x4096x64 threads=8  - already done
+[39/70] torch 8x16384x64 threads=1  - already done
+[40/70] simd 8x4096x64 threads=8  - already done
+[41/70] naive 8x1024x64 threads=1  - already done
+[42/70] torch 8x262144x64 threads=8  - already done
+[43/70] torch 8x256x64 threads=8  - already done
+[44/70] naive 8x16384x64 threads=8  - already done
+[45/70] fused 8x65536x64 threads=1  - already done
+[46/70] fused_f16 8x256x64 threads=8 
+[47/70] fused 8x4096x64 threads=1  - already done
+[48/70] simd 8x256x64 threads=1  - already done
+[49/70] fused 8x65536x64 threads=8  - already done
+[50/70] naive 8x4096x64 threads=1  - already done
+[51/70] fused_f16 8x4096x64 threads=1 
+[52/70] torch 8x1024x64 threads=1  - already done
+[53/70] simd 8x1024x64 threads=1  - already done
+[54/70] naive 8x16384x64 threads=1  - already done
+[55/70] fused 8x1024x64 threads=1  - already done
+[56/70] naive 8x262144x64 threads=8  - already done
+[57/70] fused 8x16384x64 threads=8  - already done
+[58/70] simd 8x16384x64 threads=1  - already done
+[59/70] fused 8x256x64 threads=1  - already done
+[60/70] simd 8x1024x64 threads=8  - already done
+[61/70] torch 8x262144x64 threads=1  - already done
+[62/70] fused_f16 8x16384x64 threads=1 
+[63/70] torch 8x256x64 threads=1  - already done
+[64/70] fused_f16 8x16384x64 threads=8 
+[65/70] torch 8x4096x64 threads=1  - already done
+[66/70] torch 8x16384x64 threads=8  - already done
+[67/70] fused 8x1024x64 threads=8  - already done
+[68/70] naive 8x1024x64 threads=8  - already done
+[69/70] fused_f16 8x65536x64 threads=8 
+[70/70] fused_f16 8x4096x64 threads=8 
+search already done: results/ryzen-6900hx/tune/gemm_2048_t1.csv
+search already done: results/ryzen-6900hx/tune/gemm_mlp_t1.csv
+search already done: results/ryzen-6900hx/tune/gemm_2048_t8.csv
+search already done: results/ryzen-6900hx/tune/attn_2048_t8.csv
+search already done: results/ryzen-6900hx/tune/attn_8192_t8.csv
+campaign complete

@@ -1,0 +1,26 @@
+  mc=144;kc=256;nc=4080: 118.0 GFLOP/s
+  mc=72;kc=256;nc=4080: 119.9 GFLOP/s
+  mc=96;kc=256;nc=4080: 120.6 GFLOP/s
+  mc=192;kc=256;nc=4080: 117.7 GFLOP/s
+  mc=288;kc=256;nc=4080: 117.3 GFLOP/s
+  mc=384;kc=256;nc=4080: 110.1 GFLOP/s
+  mc=96;kc=128;nc=4080: 111.5 GFLOP/s
+  mc=96;kc=192;nc=4080: 119.6 GFLOP/s
+  mc=96;kc=384;nc=4080: 121.8 GFLOP/s
+  mc=96;kc=512;nc=4080: 124.4 GFLOP/s
+  mc=96;kc=512;nc=1024: 123.6 GFLOP/s
+  mc=96;kc=512;nc=2048: 120.2 GFLOP/s
+  mc=96;kc=512;nc=8160: 119.0 GFLOP/s
+  mc=72;kc=512;nc=4080: 122.4 GFLOP/s
+  mc=144;kc=512;nc=4080: 125.8 GFLOP/s
+  mc=192;kc=512;nc=4080: 124.7 GFLOP/s
+  mc=288;kc=512;nc=4080: 124.0 GFLOP/s
+  mc=384;kc=512;nc=4080: 123.5 GFLOP/s
+  mc=144;kc=128;nc=4080: 116.8 GFLOP/s
+  mc=144;kc=192;nc=4080: 120.7 GFLOP/s
+  mc=144;kc=384;nc=4080: 122.4 GFLOP/s
+  mc=144;kc=512;nc=1024: 125.6 GFLOP/s
+  mc=144;kc=512;nc=2048: 124.5 GFLOP/s
+  mc=144;kc=512;nc=8160: 124.2 GFLOP/s
+search:  defaults 118.0 -> best 125.8 GFLOP/s, 24 trials, best: mc=144 kc=512 nc=4080
+confirm: defaults 124.5 -> tuned 124.5 GFLOP/s (-0.0%) at 30 repetitions

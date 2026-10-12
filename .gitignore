@@ -3,3 +3,8 @@ build/
 .idea/
 __pycache__/
 build-tsan/
+NOTES.local.md
+my_proposal
+report
+report/reference.docx
+report/pdf_header.tex

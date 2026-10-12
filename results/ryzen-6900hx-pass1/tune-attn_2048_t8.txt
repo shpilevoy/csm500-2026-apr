@@ -1,0 +1,10 @@
+  tq=192;tk=256: 542.0 GFLOP/s
+  tq=48;tk=256: 495.9 GFLOP/s
+  tq=96;tk=256: 548.2 GFLOP/s
+  tq=384;tk=256: 562.8 GFLOP/s
+  tq=768;tk=256: 541.9 GFLOP/s
+  tq=384;tk=64: 478.5 GFLOP/s
+  tq=384;tk=128: 510.6 GFLOP/s
+  tq=384;tk=512: 549.8 GFLOP/s
+  tq=384;tk=1024: 457.5 GFLOP/s
+defaults: 542.0 GFLOP/s  tuned: 562.8 GFLOP/s (+3.8%)  trials: 9  best: tq=384 tk=256

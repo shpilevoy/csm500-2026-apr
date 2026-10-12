@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-12T07:34:24+00:00",
+  "host": "nickpc",
+  "cpu": "AMD Ryzen 9 6900HX with Radeon Graphics",
+  "kernel": "7.0.0-38-generic",
+  "physical_cores": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14
+  ],
+  "governor": "schedutil",
+  "boost": "1",
+  "smt": "on",
+  "compiler": "c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+  "blas_libs": {
+    "openblas": "/usr/lib/x86_64-linux-gnu/openblas-openmp/libopenblasp-r0.3.32.so",
+    "blis": "/usr/lib/x86_64-linux-gnu/blis-openmp/libblis.so.4",
+    "onednn": "/usr/lib/x86_64-linux-gnu/libdnnl.so.3.9"
+  }
+}

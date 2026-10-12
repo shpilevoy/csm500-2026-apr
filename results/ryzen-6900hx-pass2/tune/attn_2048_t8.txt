@@ -1,0 +1,16 @@
+  tq=192;tk=256: 561.2 GFLOP/s
+  tq=48;tk=256: 593.0 GFLOP/s
+  tq=96;tk=256: 577.8 GFLOP/s
+  tq=384;tk=256: 561.8 GFLOP/s
+  tq=768;tk=256: 579.2 GFLOP/s
+  tq=48;tk=64: 474.5 GFLOP/s
+  tq=48;tk=128: 540.6 GFLOP/s
+  tq=48;tk=512: 626.9 GFLOP/s
+  tq=48;tk=1024: 630.9 GFLOP/s
+  tq=96;tk=1024: 599.6 GFLOP/s
+  tq=192;tk=1024: 577.6 GFLOP/s
+  tq=384;tk=1024: 565.6 GFLOP/s
+  tq=768;tk=1024: 430.2 GFLOP/s
+search:  defaults 561.2 -> best 630.9 GFLOP/s, 13 trials, best: tq=48 tk=1024
+confirm: defaults 589.0 -> tuned 602.5 GFLOP/s (+2.3%) at 30 repetitions
+search already done: results/ryzen-6900hx/tune/attn_2048_t8.csv

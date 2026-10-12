@@ -41,3 +41,18 @@ OMP_TOOL_LIBRARIES=/usr/lib/llvm-21/lib/libarcher.so TSAN_OPTIONS=ignore_noninst
 - Bytes read from main memory are estimated as `64 * (l2pf_dram + min(l2_miss, dram_fills))`
   (`dram_lines` in `scripts/plot_results.py`). The campaign checks this against four loops of
   known traffic; see Table C1b in the report.
+
+## Layout
+
+| Path | Contents |
+|---|---|
+| `src/gemm_*.cpp` | GEMM reference implementation and the optimisation ladder |
+| `src/attention*.cpp` | Attention reference implementation and kernels (optional causal mask) |
+| `src/decode*.cpp` | Decode-step attention: one query against cached keys and values |
+| `bench/` | Benchmark programs: `bench_gemm`, `bench_attn`, `bench_decode`, `bench_machine`, and `attn_phases` |
+| `tests/` | Correctness tests against the reference implementations; `test_harness.py` tests the harness |
+| `scripts/run_sweep.py` | One sweep: shuffled, pinned, resumable |
+| `scripts/autotune.py` | Coordinate-descent tuner over block and tile sizes |
+| `scripts/run_all.sh` | The whole campaign |
+| `results/<name>/` | Raw per-repetition CSVs, machine description, figures |
+

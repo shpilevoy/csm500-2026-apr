@@ -41,7 +41,7 @@ struct GemmParams {
   // The default values are those of the BLIS configuration for AMD Zen in
   // single precision. They come from F. G. Van Zee and others, "BLIS", file
   // config/zen/bli_cntx_init_zen.c. https://github.com/flame/blis
-  // (accessed 17 Aug 2026).
+  // (accessed 12 Oct 2026).
   int mc = 144;
   int kc = 256;
   int nc = 4080;

@@ -1,0 +1,16 @@
+  mc=144;kc=256;nc=4080: 757.6 GFLOP/s
+  mc=72;kc=256;nc=4080: 763.8 GFLOP/s
+  mc=96;kc=256;nc=4080: 786.0 GFLOP/s
+  mc=192;kc=256;nc=4080: 625.3 GFLOP/s
+  mc=288;kc=256;nc=4080: 636.5 GFLOP/s
+  mc=384;kc=256;nc=4080: 671.7 GFLOP/s
+  mc=96;kc=128;nc=4080: 704.6 GFLOP/s
+  mc=96;kc=192;nc=4080: 649.7 GFLOP/s
+  mc=96;kc=384;nc=4080: 675.9 GFLOP/s
+  mc=96;kc=512;nc=4080: 745.1 GFLOP/s
+  mc=96;kc=256;nc=1024: 785.5 GFLOP/s
+  mc=96;kc=256;nc=2048: 738.9 GFLOP/s
+  mc=96;kc=256;nc=8160: 625.4 GFLOP/s
+search:  defaults 757.6 -> best 786.0 GFLOP/s, 13 trials, best: mc=96 kc=256 nc=4080
+confirm: defaults 752.4 -> tuned 731.0 GFLOP/s (-2.9%) at 30 repetitions
+search already done: results/ryzen-6900hx/tune/gemm_2048_t8.csv

@@ -12,7 +12,7 @@
 // exp(x) for x <= 0. The relative error is about 2e-7.
 // The constants are those of expf in the Cephes library.
 // S. L. Moshier, "Cephes mathematical library", file single/expf.c, 2000.
-// https://www.netlib.org/cephes (accessed 10 Sep 2026). The code is written new.
+// https://www.netlib.org/cephes (accessed 12 Oct 2026). The code is written new.
 // Inputs below -87 are clamped. This keeps the result a normal float.
 inline __m256 exp256(__m256 x) {
   x = _mm256_max_ps(x, _mm256_set1_ps(-87.0f));

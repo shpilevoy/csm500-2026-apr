@@ -1,0 +1,14 @@
+  mc=144;kc=256;nc=4080: 117.2 GFLOP/s
+  mc=72;kc=256;nc=4080: 118.4 GFLOP/s
+  mc=96;kc=256;nc=4080: 116.0 GFLOP/s
+  mc=192;kc=256;nc=4080: 115.1 GFLOP/s
+  mc=288;kc=256;nc=4080: 110.8 GFLOP/s
+  mc=384;kc=256;nc=4080: 115.7 GFLOP/s
+  mc=72;kc=128;nc=4080: 112.5 GFLOP/s
+  mc=72;kc=192;nc=4080: 113.6 GFLOP/s
+  mc=72;kc=384;nc=4080: 109.9 GFLOP/s
+  mc=72;kc=512;nc=4080: 113.1 GFLOP/s
+  mc=72;kc=256;nc=1024: 117.4 GFLOP/s
+  mc=72;kc=256;nc=2048: 117.8 GFLOP/s
+  mc=72;kc=256;nc=8160: 115.7 GFLOP/s
+defaults: 117.2 GFLOP/s  tuned: 118.4 GFLOP/s (+1.0%)  trials: 13  best: mc=72 kc=256 nc=4080

@@ -1,0 +1,15 @@
+  tq=192;tk=256: 644.4 GFLOP/s
+  tq=48;tk=256: 622.3 GFLOP/s
+  tq=96;tk=256: 644.0 GFLOP/s
+  tq=384;tk=256: 630.5 GFLOP/s
+  tq=768;tk=256: 621.2 GFLOP/s
+  tq=192;tk=64: 565.5 GFLOP/s
+  tq=192;tk=128: 623.9 GFLOP/s
+  tq=192;tk=512: 647.5 GFLOP/s
+  tq=192;tk=1024: 620.3 GFLOP/s
+  tq=48;tk=512: 637.3 GFLOP/s
+  tq=96;tk=512: 636.6 GFLOP/s
+  tq=384;tk=512: 632.0 GFLOP/s
+  tq=768;tk=512: 597.7 GFLOP/s
+search:  defaults 644.4 -> best 647.5 GFLOP/s, 13 trials, best: tq=192 tk=512
+confirm: defaults 636.8 -> tuned 642.6 GFLOP/s (+0.9%) at 30 repetitions

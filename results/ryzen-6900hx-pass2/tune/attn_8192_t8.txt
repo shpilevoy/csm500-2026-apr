@@ -1,0 +1,12 @@
+  tq=192;tk=256: 641.5 GFLOP/s
+  tq=48;tk=256: 610.3 GFLOP/s
+  tq=96;tk=256: 630.4 GFLOP/s
+  tq=384;tk=256: 629.6 GFLOP/s
+  tq=768;tk=256: 609.2 GFLOP/s
+  tq=192;tk=64: 543.9 GFLOP/s
+  tq=192;tk=128: 611.6 GFLOP/s
+  tq=192;tk=512: 628.3 GFLOP/s
+  tq=192;tk=1024: 612.5 GFLOP/s
+search:  defaults 641.5 -> best 641.5 GFLOP/s, 9 trials, best: tq=192 tk=256
+confirm: defaults 625.5 -> tuned 626.0 GFLOP/s (+0.1%) at 30 repetitions
+search already done: results/ryzen-6900hx/tune/attn_8192_t8.csv

@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-12T08:18:27+00:00",
+  "host": "nickpc",
+  "cpu": "AMD Ryzen 9 6900HX with Radeon Graphics",
+  "kernel": "7.0.0-38-generic",
+  "physical_cores": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14
+  ],
+  "governor": "schedutil",
+  "boost": "1",
+  "smt": "on",
+  "compiler": "c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+  "blas_libs": {
+    "openblas": "/usr/lib/x86_64-linux-gnu/openblas-openmp/libopenblasp-r0.3.32.so",
+    "blis": "/usr/lib/x86_64-linux-gnu/blis-openmp/libblis.so.4",
+    "onednn": "/usr/lib/x86_64-linux-gnu/libdnnl.so.3.9"
+  },
+  "python": "3.14.4",
+  "versions": {
+    "cmake": "4.2.3-2ubuntu2",
+    "libblis-dev:amd64": "1.1-3build1",
+    "libdnnl-dev": "3.9.1+ds-2",
+    "libopenblas-openmp-dev:amd64": "0.3.32+ds-5",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6"
+  },
+  "source_sha256": "bee8e568ae8f9758"
+}
